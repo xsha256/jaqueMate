@@ -1,0 +1,35 @@
+# Primera vez (construir todo):
+docker-compose up --build -d
+
+
+############### BACKEND ######################
+# Reconstruir solo el backend
+docker-compose up --build -d backend
+
+# O si quieres forzar reconstrucción completa:
+docker-compose build --no-cache backend && docker-compose up -d backend
+################################################
+
+
+############### FRONTEND ######################
+# Reconstruir solo el frontend
+docker-compose up --build -d frontend
+
+# O forzar reconstrucción completa:
+docker-compose build --no-cache frontend && docker-compose up -d frontend
+################################################
+
+
+# Ver logs:
+# Todos los servicios
+docker-compose logs -f
+
+# Solo backend
+docker-compose logs -f backend
+
+# Solo frontend
+docker-compose logs -f frontend
+
+# Parar todo:
+docker-compose down
+
