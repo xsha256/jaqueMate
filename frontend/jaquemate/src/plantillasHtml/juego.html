@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JaqueMate - Juego</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="juego.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-left">
+                <a href="home.html" class="nav-btn logo">JaqueMate</a>
+                <a href="juego.html" class="nav-btn">Juego</a>
+            </div>
+            <div class="nav-right">
+                <a href="login.html" class="nav-btn">Login</a>
+                <a href="registro.html" class="nav-btn">Registro</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="game-container">
+            <div class="board-wrapper">
+                <!-- Tablero al estilo chessboard.js -->
+                <div class="chessboard">
+                    <!-- Fila 8 -->
+                    <div class="square light">♜</div>
+                    <div class="square dark">♞</div>
+                    <div class="square light">♝</div>
+                    <div class="square dark">♛</div>
+                    <div class="square light">♚</div>
+                    <div class="square dark">♝</div>
+                    <div class="square light">♞</div>
+                    <div class="square dark">♜</div>
+                    <!-- Fila 7 -->
+                    <div class="square dark">♟</div>
+                    <div class="square light">♟</div>
+                    <div class="square dark">♟</div>
+                    <div class="square light">♟</div>
+                    <div class="square dark">♟</div>
+                    <div class="square light">♟</div>
+                    <div class="square dark">♟</div>
+                    <div class="square light">♟</div>
+                    <!-- Filas vacías 6-3 -->
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <div class="square dark"></div>
+                    <div class="square light"></div>
+                    <!-- Fila 2 -->
+                    <div class="square light">♙</div>
+                    <div class="square dark">♙</div>
+                    <div class="square light">♙</div>
+                    <div class="square dark">♙</div>
+                    <div class="square light">♙</div>
+                    <div class="square dark">♙</div>
+                    <div class="square light">♙</div>
+                    <div class="square dark">♙</div>
+                    <!-- Fila 1 -->
+                    <div class="square dark">♖</div>
+                    <div class="square light">♘</div>
+                    <div class="square dark">♗</div>
+                    <div class="square light">♕</div>
+                    <div class="square dark">♔</div>
+                    <div class="square light">♗</div>
+                    <div class="square dark">♘</div>
+                    <div class="square light">♖</div>
+                </div>
+            </div>
+
+            <!-- Panel de jugadas -->
+            <aside class="moves-panel">
+                <h3>Historial de Jugadas</h3>
+                <ul class="moves-list">
+                    <li>1. e4 e5</li>
+                    <li>2. Nf3 Nc6</li>
+                    <li>3. Bb5 a6</li>
+                    <li>4. Ba4 Nf6</li>
+                    <li>5. O-O Be7</li>
+                    <li>6. Re1 b5</li>
+                    <li>7. Bb3 d6</li>
+                    <li>8. c3 O-O</li>
+                    <li>9. h3 Na5</li>
+                    <li>10. Bc2 c5</li>
+                </ul>
+            </aside>
+        </div>
+
+        <!-- Botón abrir y cerrar el panel de movimientos -->
+        <button class="toggle-moves">☰</button>
+    </main>
+
+    <footer>
+        <p>Participantes: Richart Rubio, Moha Amri, Patryk Kowalik, Yordan Radkov | DAW 2025</p>
+    </footer>
+</body>
+</html>

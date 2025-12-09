@@ -1,0 +1,145 @@
+/* JUEGO */
+main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.game-container {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    max-width: 1400px;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+/* Tablero de ajedrez */
+.board-wrapper {
+    flex-shrink: 0;
+    transition: margin-left 0.3s ease;
+}
+
+.chessboard {
+    width: 500px;
+    height: 500px;
+    background-color: #2d2d2d;
+    border: 3px solid #404040;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+}
+
+.square {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+}
+
+.square.light {
+    background-color: #d4d4d4;
+    color: #1a1a1a;
+}
+
+.square.dark {
+    background-color: #4a4a4a;
+    color: #e0e0e0;
+}
+
+/* Menú lateral */
+.moves-panel {
+    background-color: #2d2d2d;
+    width: 0;
+    overflow: hidden;
+    border-radius: 10px;
+    border: 1px solid #404040;
+    transition: all 0.3s ease;
+    opacity: 0;
+}
+
+.moves-panel.open {
+    width: 300px;
+    opacity: 1;
+    padding: 1.5rem;
+}
+
+.moves-panel h3 {
+    color: #c41e3a;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.moves-list {
+    list-style: none;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.moves-list li {
+    padding: 0.8rem;
+    margin-bottom: 0.5rem;
+    background-color: #3a3a3a;
+    border-radius: 5px;
+    font-family: 'Roboto Mono', 'Courier New', monospace;
+    color: #b0b0b0;
+    border: 1px solid #505050;
+}
+
+.moves-list li:hover {
+    background-color: #c41e3a;
+    color: #e0e0e0;
+    cursor: pointer;
+    border-color: #c41e3a;
+}
+
+/* Barra scroll para la lista de jugadas */
+.moves-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.moves-list::-webkit-scrollbar-track {
+    background: #1f1f1f;
+    border-radius: 4px;
+}
+
+.moves-list::-webkit-scrollbar-thumb {
+    background: #505050;
+    border-radius: 4px;
+}
+
+.moves-list::-webkit-scrollbar-thumb:hover {
+    background: #c41e3a;
+}
+
+/* BOTON MOVIMIENTOS */
+.toggle-moves {
+    position: fixed;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #2d2d2d;
+    border: 1px solid #404040;
+    padding: 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+    z-index: 10;
+    color: #e0e0e0;
+}
+
+.toggle-moves:hover {
+    background-color: #c41e3a;
+    border-color: #c41e3a;
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* Estado cuando el panel está abierto */
+.game-container.panel-open .board-wrapper {
+    margin-left: -150px;
+}
