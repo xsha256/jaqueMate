@@ -1,0 +1,105 @@
+/* 
+   PALETA DE COLORES
+   =================
+   
+   FONDOS:
+   - #1a1a1a - Fondo principal de páginas
+   - #2d2d2d - Header, footer, cards, formularios
+   - #3a3a3a - Hover states, elementos destacados
+   
+   ROJOS (ACENTOS):
+   - #c41e3a - Rojo principal (botones, enlaces, títulos)
+   - #8b1628 - Rojo oscuro (hover botones)
+   - #e63946 - Rojo claro (highlights)
+   
+   TEXTOS:
+   - #e0e0e0 - Texto principal
+   - #b0b0b0 - Texto secundario
+   - #808080 - Texto deshabilitado
+   
+   UI:
+   - #404040 - Bordes principales
+   - #505050 - Bordes secundarios
+   - #1f1f1f - Sombras, fondos inputs
+   
+   TABLERO:
+   - #d4d4d4 - Casillas claras
+   - #4a4a4a - Casillas oscuras
+   ========================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+}
+
+/*HEADER*/
+header {
+    background-color: #2d2d2d;
+    padding: 1.5rem 3rem;
+    border-bottom: 1px solid #404040;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.nav-left,
+.nav-right {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.nav-btn {
+    text-decoration: none;
+    color: #e0e0e0;
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+    background-color: #3a3a3a;
+    color: #e63946;
+}
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #c41e3a;
+    letter-spacing: -0.5px;
+}
+
+.logo:hover {
+    color: #e63946;
+    background-color: transparent;
+}
+
+/*FOOTER*/
+footer {
+    background-color: #2d2d2d;
+    padding: 1.5rem 3rem;
+    text-align: center;
+    border-top: 1px solid #404040;
+}
+
+footer p {
+    color: #b0b0b0;
+    font-size: 1rem;
+}
