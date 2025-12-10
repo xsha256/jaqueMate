@@ -1,4 +1,4 @@
-/* GameHeader - WebComponent para el Header de JaqueMate*/
+/* GameHeader - WebComponent */
 import style from './GameHeader.css?inline';
 
 class GameHeader extends HTMLElement {
