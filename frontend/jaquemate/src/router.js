@@ -7,6 +7,7 @@ const routes = new Map([
     ['#home', 'game-home'],
     ['#game', 'game-board'],
     ['#moves', 'game-moves'],
+    ['#profile', 'game-profile'],
     ['#login', 'game-login'],
     ['#register', 'game-register']
 ]);

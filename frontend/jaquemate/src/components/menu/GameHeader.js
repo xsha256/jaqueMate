@@ -36,6 +36,7 @@ class GameHeader extends HTMLElement {
                     <div class="nav-right">
                         <a href="#login" class="nav-btn" id="loginLink">Login</a>
                         <a href="#register" class="nav-btn" id="registerLink">Registro</a>
+                        <a href="#profile" class="nav-btn" id="botonPerfil" hidden>Perfil</a>
                         <button class="nav-btn logout-btn" id="botonLogout" hidden>Logout</button>
                     </div>
                 </nav>
@@ -99,6 +100,7 @@ class GameHeader extends HTMLElement {
         
         const botonJuego = this.shadowRoot.querySelector('#botonJuego');
         const botonListaJugadas = this.shadowRoot.querySelector('#botonListaJugadas');
+        const botonPerfil = this.shadowRoot.querySelector('#botonPerfil');
         const botonLogout = this.shadowRoot.querySelector('#botonLogout');
         const loginLink = this.shadowRoot.querySelector('#loginLink');
         const registerLink = this.shadowRoot.querySelector('#registerLink');
@@ -108,12 +110,14 @@ class GameHeader extends HTMLElement {
             botonLogout.removeAttribute('hidden');
             botonJuego.removeAttribute('hidden');
             botonListaJugadas.removeAttribute('hidden');
+            botonPerfil.removeAttribute('hidden');
             loginLink.parentElement.style.display = 'none';
             registerLink.parentElement.style.display = 'none';
         } else {
             // Usuario NO logeado
             botonJuego.setAttribute('hidden', true);
             botonListaJugadas.setAttribute('hidden', true);
+            botonPerfil.setAttribute('hidden', true);
             botonLogout.setAttribute('hidden', true);
             loginLink.parentElement.style.display = 'block';
             registerLink.parentElement.style.display = 'block';
