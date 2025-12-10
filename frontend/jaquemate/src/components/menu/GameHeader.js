@@ -31,6 +31,7 @@ class GameHeader extends HTMLElement {
                     <div class="nav-left">
                         <a href="#home" class="nav-btn logo">JaqueMate</a>
                         <a href="#game" class="nav-btn" id="botonJuego" hidden>Juego</a>
+                        <a href="#moves" class="nav-btn" id="botonListaJugadas" hidden>Lista Jugadas</a>
                     </div>
                     <div class="nav-right">
                         <a href="#login" class="nav-btn" id="loginLink">Login</a>
@@ -97,6 +98,7 @@ class GameHeader extends HTMLElement {
         const token = localStorage.getItem('access_token');
         
         const botonJuego = this.shadowRoot.querySelector('#botonJuego');
+        const botonListaJugadas = this.shadowRoot.querySelector('#botonListaJugadas');
         const botonLogout = this.shadowRoot.querySelector('#botonLogout');
         const loginLink = this.shadowRoot.querySelector('#loginLink');
         const registerLink = this.shadowRoot.querySelector('#registerLink');
@@ -105,11 +107,13 @@ class GameHeader extends HTMLElement {
             // Usuario logeado
             botonLogout.removeAttribute('hidden');
             botonJuego.removeAttribute('hidden');
+            botonListaJugadas.removeAttribute('hidden');
             loginLink.parentElement.style.display = 'none';
             registerLink.parentElement.style.display = 'none';
         } else {
             // Usuario NO logeado
             botonJuego.setAttribute('hidden', true);
+            botonListaJugadas.setAttribute('hidden', true);
             botonLogout.setAttribute('hidden', true);
             loginLink.parentElement.style.display = 'block';
             registerLink.parentElement.style.display = 'block';

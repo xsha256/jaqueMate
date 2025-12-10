@@ -5,6 +5,7 @@
  * Rutas disponibles:
  * - '' o '#home' → game-home (página principal)
  * - '#game' → game-board (interfaz del juego)
+ * - '#moves' → game-moves (lista de jugadas)
  * - '#login' → game-login (formulario de login)
  * - '#register' → game-register (formulario de registro)
  */
@@ -15,6 +16,7 @@ const routes = new Map([
     ['', 'game-home'],
     ['#home', 'game-home'],
     ['#game', 'game-board'],
+    ['#moves', 'game-moves'],
     ['#login', 'game-login'],
     ['#register', 'game-register']
 ]);
