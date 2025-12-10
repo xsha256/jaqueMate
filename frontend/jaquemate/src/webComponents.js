@@ -10,22 +10,18 @@
 ///////// Importar componentes ////////////// 
 import { GameHeader } from './components/menu/GameHeader.js';
 import { GameFooter } from './components/footer/GameFooter.js';
-//import { GameHome } from './components/home/GameHome.js';
-import { GameProfile } from './components/perfil/GameProfile.js';
-
-// Componentes pendientes (se añadirán cuando se creen)
-// import { GameBoard } from './components/board/GameBoard.js';
-// import { GameMoves } from './components/moves/GameMoves.js';
-// import { GameLogin } from './components/auth/GameLogin.js';
-// import { GameRegister } from './components/auth/GameRegister.js';
+// import { GameHome } from './components/home/GameHome.js';
+// import { GameProfile } from './components/perfil/GameProfile.js';
+// import { GameBoard } from './components/GameBoard.js';
+// import { GameMoves } from './components/GameMoves.js';
+// import { GameLogin } from './components/login/GameLogin.js';
+// import { GameRegister } from './components/registro/GameRegister.js';
 
 ///////// Registrar WebComponents //////////// 
 customElements.define('game-header', GameHeader);
 customElements.define('game-footer', GameFooter);
-customElements.define('game-profile', GameProfile);
+//customElements.define('game-profile', GameProfile);
 //customElements.define('game-home', GameHome);
-
-///////////// Registrar componentes pendientes (descomentar cuando se creen) ///////////////////////////////
 // customElements.define('game-board', GameBoard);
 // customElements.define('game-moves', GameMoves);
 // customElements.define('game-login', GameLogin);
