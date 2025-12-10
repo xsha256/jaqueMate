@@ -1,14 +1,4 @@
-/**
- * Router para JaqueMate
- * Mapea rutas a componentes web components
- * 
- * Rutas disponibles:
- * - '' o '#home' → game-home (página principal)
- * - '#game' → game-board (interfaz del juego)
- * - '#moves' → game-moves (lista de jugadas)
- * - '#login' → game-login (formulario de login)
- * - '#register' → game-register (formulario de registro)
- */
+/* Router con todas las rutas*/
 
 export { router };
 
@@ -31,3 +21,13 @@ function router(route, container) {
         container.innerHTML = `<h2>404 - Página no encontrada</h2>`;
     }
 }
+
+/**
+ * Rutas disponibles:
+ * - '' o '#home' → game-home (a lapágina principal)
+ * - '#game' → game-board (el juego en si)
+ * - '#moves' → game-moves (lista de jugadas total)
+ * - '#login' → game-login (formulario de login)
+ * - '#register' → game-register (formulario de registro)
+ */
+
