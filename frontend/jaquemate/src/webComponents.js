@@ -10,19 +10,19 @@
 ///////// Importar componentes ////////////// 
 import { GameHeader } from './components/menu/GameHeader.js';
 import { GameFooter } from './components/footer/GameFooter.js';
+import { GameMoves } from './components/listaJugadas/GameMoves.js';
 // import { GameHome } from './components/home/GameHome.js';
 // import { GameProfile } from './components/perfil/GameProfile.js';
 // import { GameBoard } from './components/GameBoard.js';
-// import { GameMoves } from './components/GameMoves.js';
 // import { GameLogin } from './components/login/GameLogin.js';
 // import { GameRegister } from './components/registro/GameRegister.js';
 
 ///////// Registrar WebComponents //////////// 
 customElements.define('game-header', GameHeader);
 customElements.define('game-footer', GameFooter);
-//customElements.define('game-profile', GameProfile);
+customElements.define('game-moves', GameMoves);
 //customElements.define('game-home', GameHome);
+// customElements.define('game-profile', GameProfile);
 // customElements.define('game-board', GameBoard);
-// customElements.define('game-moves', GameMoves);
 // customElements.define('game-login', GameLogin);
 // customElements.define('game-register', GameRegister);
