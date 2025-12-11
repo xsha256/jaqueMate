@@ -1,0 +1,21 @@
+/* GameFooter Styles */
+
+:host {
+    --color-bg-footer: #2d2d2d;
+    --color-text-secondary: #b0b0b0;
+    --color-border: #404040;
+}
+
+footer {
+    background-color: var(--color-bg-footer);
+    padding: 1.5rem 3rem;
+    text-align: center;
+    border-top: 1px solid var(--color-border);
+    margin-top: auto;
+}
+
+footer p {
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    margin: 0;
+}
