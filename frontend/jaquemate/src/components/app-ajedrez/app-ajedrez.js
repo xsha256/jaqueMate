@@ -25,6 +25,14 @@ class AppAjedrez extends HTMLElement {
           </div>
           <panel-control id="panel"></panel-control>
         </div>
+        <div id="modal-fin-juego" class="modal-overlay" style="display: none;">
+          <div class="modal-content">
+            <div class="modal-icon" id="modal-icon"></div>
+            <h2 id="modal-titulo"></h2>
+            <p id="modal-mensaje"></p>
+            <button id="btn-nueva-partida" class="btn-primary">Nueva Partida</button>
+          </div>
+        </div>
       </main>
     `;
   }
@@ -32,11 +40,21 @@ class AppAjedrez extends HTMLElement {
   setupReferences() {
     this.tablero = this.querySelector('#tablero');
     this.panel = this.querySelector('#panel');
+    this.modal = this.querySelector('#modal-fin-juego');
+    this.modalTitulo = this.querySelector('#modal-titulo');
+    this.modalMensaje = this.querySelector('#modal-mensaje');
+    this.modalIcon = this.querySelector('#modal-icon');
+    this.btnNuevaPartida = this.querySelector('#btn-nueva-partida');
   }
 
   setupEventListeners() {
     this.tablero.addEventListener('intento-movimiento', (evento) => {
       this.manejarIntentoMovimiento(evento.detail);
+    });
+
+    this.btnNuevaPartida.addEventListener('click', () => {
+      this.cerrarModal();
+      this.reiniciarPartida();
     });
   }
 
@@ -76,12 +94,66 @@ class AppAjedrez extends HTMLElement {
       } catch (error) {
         console.error('Error al guardar movimiento:', error);
       }
+
+      // Verificar si el juego ha terminado
+      this.verificarFinDeJuego();
     }
   }
 
   actualizarHistorial() {
     const historial = this.chess.history();
     this.panel.actualizarHistorial(historial);
+  }
+
+  verificarFinDeJuego() {
+    if (this.chess.isCheckmate()) {
+      const ganador = this.chess.turn() === 'w' ? 'Negras' : 'Blancas';
+      setTimeout(() => {
+        this.mostrarModal('¡Jaque Mate!', `${ganador} ganan la partida`, 'victoria');
+      }, 300);
+    } else if (this.chess.isDraw()) {
+      let razon = 'Tablas';
+      if (this.chess.isStalemate()) {
+        razon = 'Ahogado (Stalemate)';
+      } else if (this.chess.isThreefoldRepetition()) {
+        razon = 'Triple repetición';
+      } else if (this.chess.isInsufficientMaterial()) {
+        razon = 'Material insuficiente';
+      }
+      setTimeout(() => {
+        this.mostrarModal('Empate', razon, 'empate');
+      }, 300);
+    } else if (this.chess.isCheck()) {
+      const jugadorEnJaque = this.chess.turn() === 'w' ? 'Blancas' : 'Negras';
+      console.log(`¡Jaque a las ${jugadorEnJaque}!`);
+    }
+  }
+
+  mostrarModal(titulo, mensaje, tipo) {
+    this.modalTitulo.textContent = titulo;
+    this.modalMensaje.textContent = mensaje;
+
+    // Configurar el icono según el tipo
+    this.modalIcon.className = 'modal-icon';
+    if (tipo === 'victoria') {
+      this.modalIcon.classList.add('icon-victoria');
+      this.modalIcon.textContent = '👑';
+    } else if (tipo === 'empate') {
+      this.modalIcon.classList.add('icon-empate');
+      this.modalIcon.textContent = '🤝';
+    }
+
+    this.modal.style.display = 'flex';
+  }
+
+  cerrarModal() {
+    this.modal.style.display = 'none';
+  }
+
+  reiniciarPartida() {
+    this.chess.reset();
+    this.tablero.posicion$.next(this.chess.fen());
+    this.actualizarHistorial();
   }
 }
 
