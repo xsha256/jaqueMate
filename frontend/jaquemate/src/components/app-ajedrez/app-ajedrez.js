@@ -1,0 +1,164 @@
+import { Chess } from 'chess.js';
+import './app-ajedrez.css';
+import '../tablero-ajedrez/tablero-ajedrez.js';
+import '../panel-control/panel-control.js';
+import { guardarMovimiento } from '../../services/api.service.js';
+
+class AppAjedrez extends HTMLElement {
+  constructor() {
+    super();
+    this.chess = new Chess();
+  }
+
+  connectedCallback() {
+    this.render();
+    this.setupReferences();
+    this.setupEventListeners();
+  }
+
+  render() {
+    this.innerHTML = `
+      <main>
+        <div class="game-container">
+          <div class="board-wrapper">
+            <tablero-ajedrez id="tablero"></tablero-ajedrez>
+          </div>
+          <panel-control id="panel"></panel-control>
+        </div>
+        <div id="modal-fin-juego" class="modal-overlay" style="display: none;">
+          <div class="modal-content">
+            <div class="modal-icon" id="modal-icon"></div>
+            <h2 id="modal-titulo"></h2>
+            <p id="modal-mensaje"></p>
+            <button id="btn-nueva-partida" class="btn-primary">Nueva Partida</button>
+          </div>
+        </div>
+      </main>
+    `;
+  }
+
+  setupReferences() {
+    this.tablero = this.querySelector('#tablero');
+    this.panel = this.querySelector('#panel');
+    this.modal = this.querySelector('#modal-fin-juego');
+    this.modalTitulo = this.querySelector('#modal-titulo');
+    this.modalMensaje = this.querySelector('#modal-mensaje');
+    this.modalIcon = this.querySelector('#modal-icon');
+    this.btnNuevaPartida = this.querySelector('#btn-nueva-partida');
+  }
+
+  setupEventListeners() {
+    this.tablero.addEventListener('intento-movimiento', (evento) => {
+      this.manejarIntentoMovimiento(evento.detail);
+    });
+
+    this.btnNuevaPartida.addEventListener('click', () => {
+      this.cerrarModal();
+      this.reiniciarPartida();
+    });
+  }
+
+  async manejarIntentoMovimiento(detalle) {
+    const { desde, hasta } = detalle;
+
+    let movimiento;
+    try {
+      movimiento = this.chess.move({
+        from: desde,
+        to: hasta,
+        promotion: 'q'
+      });
+    } catch (e) {
+      return;
+    }
+
+    if (movimiento) {
+      this.tablero.posicion$.next(this.chess.fen());
+      this.actualizarHistorial();
+
+      const datosParaBD = {
+        usuario: 'ID_USUARIO',
+        posicionInicial: desde,
+        posicionFinal: hasta,
+        colorFichas: movimiento.color === 'w' ? 'blancas' : 'negras',
+        pieza: movimiento.piece,
+        fenAntes: detalle.posicionAnterior,
+        fenDespues: this.chess.fen(),
+        san: movimiento.san,
+        captura: movimiento.captured || null,
+        timestamp: new Date().toISOString()
+      };
+
+      try {
+        await guardarMovimiento(datosParaBD);
+      } catch (error) {
+        console.error('Error al guardar movimiento:', error);
+      }
+
+      // Verificar si el juego ha terminado
+      this.verificarFinDeJuego();
+    }
+  }
+
+  actualizarHistorial() {
+    const historial = this.chess.history();
+    this.panel.actualizarHistorial(historial);
+  }
+
+  verificarFinDeJuego() {
+    if (this.chess.isCheckmate()) {
+      const ganador = this.chess.turn() === 'w' ? 'Negras' : 'Blancas';
+      setTimeout(() => {
+        this.mostrarModal('¡Jaque Mate!', `${ganador} ganan la partida`, 'victoria');
+      }, 300);
+    } else if (this.chess.isDraw()) {
+      let razon = 'Tablas';
+      if (this.chess.isStalemate()) {
+        razon = 'Ahogado (Stalemate)';
+      } else if (this.chess.isThreefoldRepetition()) {
+        razon = 'Triple repetición';
+      } else if (this.chess.isInsufficientMaterial()) {
+        razon = 'Material insuficiente';
+      }
+      setTimeout(() => {
+        this.mostrarModal('Empate', razon, 'empate');
+      }, 300);
+    } else if (this.chess.isCheck()) {
+      const jugadorEnJaque = this.chess.turn() === 'w' ? 'Blancas' : 'Negras';
+      console.log(`¡Jaque a las ${jugadorEnJaque}!`);
+    }
+  }
+
+  mostrarModal(titulo, mensaje, tipo) {
+    this.modalTitulo.textContent = titulo;
+    this.modalMensaje.textContent = mensaje;
+
+    // Configurar el icono según el tipo
+    this.modalIcon.className = 'modal-icon';
+    if (tipo === 'victoria') {
+      this.modalIcon.classList.add('icon-victoria');
+      this.modalIcon.textContent = '👑';
+    } else if (tipo === 'empate') {
+      this.modalIcon.classList.add('icon-empate');
+      this.modalIcon.textContent = '🤝';
+    }
+
+    this.modal.style.display = 'flex';
+  }
+
+  cerrarModal() {
+    this.modal.style.display = 'none';
+  }
+
+  reiniciarPartida() {
+    this.chess.reset();
+    this.tablero.posicion$.next(this.chess.fen());
+    this.actualizarHistorial();
+  }
+}
+
+if (!customElements.get('app-ajedrez')) {
+  customElements.define('app-ajedrez', AppAjedrez);
+}
+
+export { AppAjedrez };

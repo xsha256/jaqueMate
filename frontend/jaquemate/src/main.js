@@ -1,11 +1,3 @@
-/**
- * Archivo principal de la aplicación JaqueMate
- * 
- * Este archivo es el punto de entrada de la aplicación.
- * Importa las librerías necesarias, registra los WebComponents,
- * e inicializa el router para gestionar la navegación.
- */
-
 // Importar estilos globales
 import "./style.css";
 
@@ -14,6 +6,7 @@ import './webComponents.js';
 
 // Importar el router
 import { router } from './router.js';
+import { AppAjedrez } from './components/app-ajedrez/app-ajedrez.js';
 
 // Esperar a que el DOM esté completamente cargado
 document.addEventListener('DOMContentLoaded', () => {
@@ -35,3 +28,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Renderizar la ruta inicial (home)
     router('', contentContainer);
 });
+
+if (!customElements.get('app-ajedrez')) {
+  customElements.define('app-ajedrez', AppAjedrez);
+}
+/**
+ * Archivo principal de la aplicación JaqueMate
+ * 
+ * Este archivo es el punto de entrada de la aplicación.
+ * Importa las librerías necesarias, registra los WebComponents,
+ * e inicializa el router para gestionar la navegación.
+ */

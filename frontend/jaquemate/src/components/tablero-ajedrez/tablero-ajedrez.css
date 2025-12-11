@@ -1,0 +1,84 @@
+tablero-ajedrez {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+tablero-ajedrez .contenedor-tablero-wrapper {
+  width: 100%;
+  height: 100%;
+  background-color: #2d2d2d;
+  border-radius: 10px;
+  padding: 2rem;
+  box-sizing: border-box;
+  border: 2px solid #404040;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+tablero-ajedrez .contenedor-tablero {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  position: relative;
+}
+
+@media (max-width: 900px) {
+  tablero-ajedrez .contenedor-tablero-wrapper {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  tablero-ajedrez .contenedor-tablero-wrapper {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  tablero-ajedrez .contenedor-tablero-wrapper {
+    padding: 0.5rem;
+  }
+}
+
+tablero-ajedrez .contenedor-tablero > div {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 5px;
+  overflow: visible !important;
+}
+
+tablero-ajedrez .contenedor-tablero .white-1e1d7 {
+  background-color: #e0e0e0 !important;
+}
+
+tablero-ajedrez .contenedor-tablero .black-3c85d {
+  background-color: #c41e3a !important;
+}
+
+tablero-ajedrez .notation-322f9 {
+  font-size: 18px !important;
+  color: #000000 !important;
+  font-weight: 700 !important;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5) !important;
+  background: transparent !important;
+  z-index: 10 !important;
+  pointer-events: none !important;
+  position: absolute !important;
+}
+
+tablero-ajedrez .piece-417db {
+  background-size: contain !important;
+}
+
+tablero-ajedrez .contenedor-tablero .highlight-white {
+  box-shadow: inset 0 0 3px 3px rgba(196, 30, 58, 0.5);
+}
+
+tablero-ajedrez .contenedor-tablero .highlight-black {
+  box-shadow: inset 0 0 3px 3px rgba(224, 224, 224, 0.5);
+}

@@ -1,14 +1,22 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>JaqueMate</title>
-  </head>
-  <body>
-    <div id="app"></div> <!-- Aqui se renderiza el menu con botones (header) -->
-    <main id="content"></main> <!-- Aqui se renderiza todo el main. El tablero, etc.. -->
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JaqueMate - Tablero de Ajedrez</title>
+  <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+</head>
+<body>
+  <div id="app"></div>
+    <main id="content"><app-ajedrez></app-ajedrez></main> <!-- Aqui se renderiza todo el main. El tablero, etc.. -->
     <div id="footer"></div> <!-- Aqui se renderiza el footer -->
-    <script type="module" src="/src/main.js"></script>
-  </body>
-</html>
+  <script type="module" src="/src/main.js"></script>
+</body>
+
+
+
+
