@@ -1,0 +1,104 @@
+/* Formulario de Registro GameRegister */
+
+
+:host {
+    --color-bg-secondary: #2d2d2d;
+    --color-bg-dark: #1f1f1f;
+    --color-text-primary: #e0e0e0;
+    --color-text-secondary: #b0b0b0;
+    --color-text-disabled: #808080;
+    --color-text-red: #c41e3a;
+    --color-text-red-dark: #8b1628;
+    --color-text-red-light: #e63946;
+    --color-border: #404040;
+}
+
+.form-container {
+    background-color: var(--color-bg-secondary);
+    padding: 3rem;
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    width: 100%;
+    max-width: 450px;
+    margin: 3rem auto;
+}
+
+.form-container h1 {
+    font-size: 2.5rem;
+    color: var(--color-text-red);
+    margin-bottom: 2rem;
+    text-align: center;
+    font-weight: bold;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 1rem;
+    color: var(--color-text-primary);
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1rem;
+    background-color: var(--color-bg-dark);
+    color: var(--color-text-primary);
+    border: 2px solid var(--color-border);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.form-group input::placeholder {
+    color: var(--color-text-disabled);
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--color-text-red);
+    background-color: var(--color-bg-secondary);
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 1rem;
+    background-color: var(--color-text-red);
+    color: var(--color-text-primary);
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+}
+
+.submit-btn:hover {
+    background-color: var(--color-text-red-dark);
+    transform: translateY(-2px);
+}
+
+.form-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: var(--color-text-secondary);
+}
+
+.form-footer a {
+    color: var(--color-text-red-light);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.form-footer a:hover {
+    color: var(--color-text-red);
+    text-decoration: underline;
+    cursor: pointer;
+}

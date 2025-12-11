@@ -1,0 +1,71 @@
+/* Estilo GameHeader */
+
+:host {
+    --color-bg-header: #2d2d2d;
+    --color-text-primary: #e0e0e0;
+    --color-text-red: #c41e3a;
+    --color-text-red-light: #e63946;
+    --color-bg-hover: #3a3a3a;
+    --color-border: #404040;
+}
+
+header {
+    background-color: var(--color-bg-header);
+    padding: 1.5rem 3rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.nav-left,
+.nav-right {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.nav-btn {
+    text-decoration: none;
+    color: var(--color-text-primary);
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.nav-btn:hover {
+    background-color: var(--color-bg-hover);
+    color: var(--color-text-red-light);
+}
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--color-text-red);
+    letter-spacing: -0.5px;
+}
+
+.logo:hover {
+    color: var(--color-text-red-light);
+    background-color: transparent;
+}
+
+.logout-btn {
+    background-color: var(--color-text-red);
+    color: var(--color-bg-header);
+    border: none;
+    font-weight: 600;
+}
+
+.logout-btn:hover {
+    background-color: var(--color-text-red-light);
+    color: var(--color-bg-header);
+}

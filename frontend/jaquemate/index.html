@@ -11,9 +11,12 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
 </head>
 <body>
-  <div id="app">
-    <app-ajedrez></app-ajedrez>
-  </div>
+  <div id="app"></div>
+    <main id="content"><app-ajedrez></app-ajedrez></main> <!-- Aqui se renderiza todo el main. El tablero, etc.. -->
+    <div id="footer"></div> <!-- Aqui se renderiza el footer -->
   <script type="module" src="/src/main.js"></script>
 </body>
-</html>
+
+
+
+
