@@ -1,0 +1,95 @@
+/* Estils propios para GameHome */
+
+:host {
+    --color-bg-primary: #1a1a1a;
+    --color-bg-secondary: #2d2d2d;
+    --color-bg-tertiary: #3a3a3a;
+    --color-text-primary: #e0e0e0;
+    --color-text-secondary: #b0b0b0;
+    --color-text-red: #c41e3a;
+    --color-text-red-dark: #8b1628;
+    --color-border: #404040;
+    --color-border-light: #505050;
+}
+
+.home-container {
+    max-width: 1000px;
+    background-color: var(--color-bg-secondary);
+    padding: 4rem;
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    margin: 3rem auto;
+}
+
+.home-container h1 {
+    font-size: 3.5rem;
+    color: var(--color-text-red);
+    margin-bottom: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    letter-spacing: -1px;
+}
+
+.home-container h2 {
+    font-size: 1.8rem;
+    color: var(--color-text-primary);
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.home-container p {
+    font-size: 1.2rem;
+    color: var(--color-text-secondary);
+    line-height: 1.8;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.participants {
+    background-color: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+    padding: 2rem;
+    border-radius: 10px;
+    margin-top: 2rem;
+    border: 1px solid var(--color-border-light);
+}
+
+.participants h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--color-text-red);
+    text-align: center;
+}
+
+.participants ul {
+    list-style: none;
+    font-size: 1.1rem;
+    text-align: center;
+}
+
+.participants li {
+    margin: 0.5rem 0;
+    color: var(--color-text-secondary);
+}
+
+.cta-button {
+    display: block;
+    margin: 2rem auto 0;
+    padding: 1rem 3rem;
+    background-color: var(--color-text-red);
+    color: var(--color-text-primary);
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    width: fit-content;
+    text-align: center;
+    cursor: pointer;
+}
+
+.cta-button:hover {
+    background-color: var(--color-text-red-dark);
+    transform: translateY(-2px);
+}
