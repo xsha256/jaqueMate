@@ -183,6 +183,8 @@ GET http://localhost:8090/api/v1/jugadas/exportar/csv HTTP/1.1
 Accept: text/csv
 
 ###
+### importar jugadas http://localhost:8090/api/v1/jugadas/importar/csv 
+### confirmar importar jugadas http://localhost:8090/api/v1/jugadas//importar/confirmar 
 
 ### Intentar crear usuario con datos inválidos (usuario muy corto)
 POST http://localhost:8090/api/v1/usuarios/registro HTTP/1.1
