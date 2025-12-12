@@ -2,7 +2,7 @@ import { Chess } from 'chess.js';
 import './app-ajedrez.css';
 import '../tablero-ajedrez/tablero-ajedrez.js';
 import '../panel-control/panel-control.js';
-import { guardarMovimiento } from '../../services/api.service.js';
+import { crearJugada } from '../../services/api.service.js';
 
 class AppAjedrez extends HTMLElement {
   constructor() {
@@ -76,23 +76,22 @@ class AppAjedrez extends HTMLElement {
       this.tablero.posicion$.next(this.chess.fen());
       this.actualizarHistorial();
 
-      const datosParaBD = {
-        usuario: 'ID_USUARIO',
-        posicionInicial: desde,
-        posicionFinal: hasta,
-        colorFichas: movimiento.color === 'w' ? 'blancas' : 'negras',
-        pieza: movimiento.piece,
-        fenAntes: detalle.posicionAnterior,
-        fenDespues: this.chess.fen(),
-        san: movimiento.san,
-        captura: movimiento.captured || null,
-        timestamp: new Date().toISOString()
+      // Guardar jugada en el backend
+      // TODO: Reemplazar con el ID real del usuario autenticado
+      const jugadaData = {
+        usuarioId: 1, // ID temporal - debe venir de la sesión del usuario
+        fen: this.chess.fen(),
+        moveUciFrom: desde,
+        moveUciTo: hasta,
+        moveSan: movimiento.san,
+        pgn: this.chess.pgn()
       };
 
       try {
-        await guardarMovimiento(datosParaBD);
+        await crearJugada(jugadaData);
+        console.log('Jugada guardada correctamente');
       } catch (error) {
-        console.error('Error al guardar movimiento:', error);
+        console.error('Error al guardar jugada:', error);
       }
 
       // Verificar si el juego ha terminado
