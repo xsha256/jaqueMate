@@ -101,8 +101,9 @@ class AppAjedrez extends HTMLElement {
   }
 
   actualizarHistorial() {
-    const historial = this.chess.history();
-    this.panel.actualizarHistorial(historial);
+    const historial = this.chess.history({ verbose: true });
+    const historialUCI = historial.map(mov => `${mov.from}${mov.to}${mov.promotion || ''}`);
+    this.panel.actualizarHistorial(historialUCI);
   }
 
   verificarFinDeJuego() {
