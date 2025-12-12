@@ -33,7 +33,7 @@ services:
       DB_USER: chess_user
       DB_PASSWORD: chess_password
       JWT_SECRET: mySecretKeyForChessGameApplicationThatIsVeryLong123456789
-      CORS_ORIGINS: http://localhost:3000,http://localhost:80
+      CORS_ORIGINS: http://localhost:3000,http://localhost:80,http://localhost:5173
     ports:
       - "8090:8090"
     depends_on:
