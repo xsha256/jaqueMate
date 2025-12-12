@@ -2,13 +2,13 @@
 
 import style from './GameMoves.css?inline';
 import { movesObservable } from '../../observables/movesObservable.js';
-import { obtenerJugadasPorUsuarioId, obtenerUsuarioId, importarJugadasCSV, confirmarImportacionJugadas } from '../../services/api.service.js';
+import { obtenerJugadasPorUsuarioId, obtenerUsuarioId, importarJugadasCSV, confirmarImportacionJugadas, eliminarJugada } from '../../services/api.service.js';
 
 class GameMoves extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
-        
+
         //estado
         this.moves = [];
         this.filteredMoves = [];
@@ -19,6 +19,8 @@ class GameMoves extends HTMLElement {
         this.filterPlayer = '';
         this.csvPreviewData = [];
         this.unsubscribe = null;
+        this.pendingMoveToView = null;
+        this.pendingMoveToDelete = null;
     }
 
     connectedCallback() {
@@ -115,6 +117,34 @@ class GameMoves extends HTMLElement {
                         </div>
                     </div>
                 </div>
+
+                <!-- Modal para Confirmación de Ver Jugada -->
+                <div class="modal-overlay" id="viewMoveModal">
+                    <div class="modal">
+                        <div class="modal-header">Ver Jugada en Tablero</div>
+                        <p style="color: var(--color-text-secondary); margin-bottom: 1.5rem; font-size: 1rem;">
+                            ¿Deseas ir al tablero para ver esta posición y continuar jugando desde este punto?
+                        </p>
+                        <div class="modal-actions">
+                            <button class="modal-btn cancel" id="viewMoveCancelBtn">Cancelar</button>
+                            <button class="modal-btn confirm" id="viewMoveConfirmBtn">D'acord</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal para Confirmación de Eliminar Jugada -->
+                <div class="modal-overlay" id="deleteMoveModal">
+                    <div class="modal">
+                        <div class="modal-header">Eliminar Jugada</div>
+                        <p style="color: var(--color-text-secondary); margin-bottom: 1.5rem; font-size: 1rem;">
+                            ¿Estás seguro de que deseas eliminar esta jugada? Esta acción no se puede deshacer.
+                        </p>
+                        <div class="modal-actions">
+                            <button class="modal-btn cancel" id="deleteMoveCancelBtn">Cancelar</button>
+                            <button class="modal-btn confirm" id="deleteMoveConfirmBtn">Eliminar</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         `;
 
@@ -161,30 +191,24 @@ class GameMoves extends HTMLElement {
         this.shadowRoot.querySelector('#exportCsvBtn').addEventListener('click', () => {
             this.exportToCSV();
         });
-    }
 
-    //datos demo - se reemplazaran con datos del observable/backend
-    loadDemoData() {
-        /* DEMO DATA - COMENTADO EN FAVOR DE DATOS DEL BACKEND
-        const demoMoves = [
-            { player: 'Kasparov', fen: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1', uci: 'e2e4' },
-            { player: 'Fischer', fen: 'rnbqkbnr/pppp1ppp/8/8/4Pp2/8/PPPP1PPP/RNBQKBNR w KQkq e3 0 2', uci: 'e2e4' },
-            { player: 'Kasparov', fen: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1', uci: 'e7e5' },
-            { player: 'Carlsen', fen: 'rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq e6 0 2', uci: 'g1f3' },
-            { player: 'Fischer', fen: 'rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq f3 1 2', uci: 'b8c6' },
-            { player: 'Kasparov', fen: 'r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq c6 2 3', uci: 'f1b5' },
-            { player: 'Carlsen', fen: 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQ1RK1 b kq b5 3 3', uci: 'a7a6' },
-            { player: 'Fischer', fen: 'r1bqkbnr/p1pp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQ1RK1 w kq a6 0 4', uci: 'b5a4' },
-            { player: 'Kasparov', fen: 'r1bqkbnr/p1pp1ppp/2n5/4p3/B3P3/5N2/PPPP1PPP/RNBQ1RK1 b kq a4 1 4', uci: 'g8f6' },
-            { player: 'Carlsen', fen: 'r1bqkb1r/p1pp1ppp/2n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQ1RK1 w kq f6 2 5', uci: 'e1g1' },
-            { player: 'Fischer', fen: 'r1bqkb1r/p1pp1ppp/2n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQ2RK b kq - 3 5', uci: 'f8e7' },
-            { player: 'Kasparov', fen: 'r1bqk2r/p1ppbppp/2n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQ2RK w kq - 4 6', uci: 'f1e1' },
-        ];
+        //modal ver jugada
+        this.shadowRoot.querySelector('#viewMoveCancelBtn').addEventListener('click', () => {
+            this.closeViewMoveModal();
+        });
 
-        this.moves = demoMoves;
-        movesObservable.setMoves(demoMoves);
-        this.applyFilters();
-        */
+        this.shadowRoot.querySelector('#viewMoveConfirmBtn').addEventListener('click', () => {
+            this.confirmViewMove();
+        });
+
+        //modal eliminar jugada
+        this.shadowRoot.querySelector('#deleteMoveCancelBtn').addEventListener('click', () => {
+            this.closeDeleteMoveModal();
+        });
+
+        this.shadowRoot.querySelector('#deleteMoveConfirmBtn').addEventListener('click', () => {
+            this.confirmDeleteMove();
+        });
     }
 
     // Cargar datos del backend
@@ -204,15 +228,16 @@ class GameMoves extends HTMLElement {
                 sort: ['createdAt,desc'] // Más recientes primero
             });
 
-            // Mapear datos del backend al formato que usa GameMoves
+            // Mapear datos del backend
             if (response && response.content) {
                 this.moves = response.content.map(jugada => ({
                     id: jugada.id,
-                    player: jugada.usuarioNombre,      // Backend: usuarioNombre → Frontend: player
-                    fen: jugada.fen,                   // Directo
-                    uci: jugada.moveUci,               // Backend: moveUci → Frontend: uci
-                    moveSan: jugada.moveSan,           // Guardado pero no mostrado en tabla
-                    createdAt: jugada.createdAt        // Guardado pero no mostrado en tabla
+                    player: jugada.usuarioNombre,
+                    fen: jugada.fen,
+                    uci: jugada.moveUci,
+                    moveSan: jugada.moveSan,
+                    createdAt: jugada.createdAt,
+                    pgn: jugada.pgn
                 }));
 
                 this.currentPage = 1;
@@ -296,12 +321,11 @@ class GameMoves extends HTMLElement {
                 btn.addEventListener('click', (e) => {
                     const action = e.target.dataset.action;
                     const index = parseInt(e.target.dataset.index);
-                    const moveIndex = this.moves.indexOf(this.filteredMoves[index]);
 
                     if (action === 'viewBoard') {
                         this.handleViewInBoard(this.filteredMoves[index]);
                     } else if (action === 'delete') {
-                        this.handleDeleteMove(moveIndex);
+                        this.handleDeleteMove(this.filteredMoves[index]);
                     }
                 });
             });
@@ -374,21 +398,73 @@ class GameMoves extends HTMLElement {
 
     //ver jugada en tablero (emite evento)
     handleViewInBoard(move) {
-        // Confirmar antes de navegar al tablero
-        if (confirm(`¿Ir al tablero a ver esta posición?`)) {
-            // Navegar a #game con el FEN codificado como parámetro
-            const fenEncodificado = encodeURIComponent(move.fen);
-            window.location.hash = `#game?fen=${fenEncodificado}`;
+        // Guardar el FEN de la jugada a visualizar
+        this.pendingMoveToView = move;
+
+        // Mostrar modal de confirmación
+        const modal = this.shadowRoot.querySelector('#viewMoveModal');
+        modal.classList.add('active');
+    }
+
+    closeViewMoveModal() {
+        const modal = this.shadowRoot.querySelector('#viewMoveModal');
+        modal.classList.remove('active');
+        this.pendingMoveToView = null;
+    }
+
+    confirmViewMove() {
+        if (this.pendingMoveToView) {
+            // Navegar a #game con el FEN y PGN codificados como parámetros
+            const fenEncodificado = encodeURIComponent(this.pendingMoveToView.fen);
+            const pgnEncodificado = this.pendingMoveToView.pgn ? encodeURIComponent(this.pendingMoveToView.pgn) : '';
+            const route = `#game?fen=${fenEncodificado}&pgn=${pgnEncodificado}`;
+
+            // Disparar evento de navegación para que el router lo maneje
+            const navigationEvent = new CustomEvent('navigate', {
+                detail: { route: route },
+                bubbles: true,
+                composed: true
+            });
+            document.dispatchEvent(navigationEvent);
+
+            // También actualizar el hash para que la URL se actualice
+            window.location.hash = route;
         }
+        this.closeViewMoveModal();
     }
 
     //eliminar jugada
-    handleDeleteMove(index) {
-        if (confirm('¿Eliminar esta jugada?')) {
-            this.moves.splice(index, 1);
-            movesObservable.setMoves(this.moves);
-            console.log('jugada eliminada. total:', this.moves.length);
+    handleDeleteMove(move) {
+        // Guardar la jugada a eliminar
+        this.pendingMoveToDelete = move;
+
+        // Mostrar modal de confirmación
+        const modal = this.shadowRoot.querySelector('#deleteMoveModal');
+        modal.classList.add('active');
+    }
+
+    closeDeleteMoveModal() {
+        const modal = this.shadowRoot.querySelector('#deleteMoveModal');
+        modal.classList.remove('active');
+        this.pendingMoveToDelete = null;
+    }
+
+    async confirmDeleteMove() {
+        if (this.pendingMoveToDelete) {
+            try {
+                // Eliminar del backend
+                await eliminarJugada(this.pendingMoveToDelete.id);
+
+                // Recargar la lista desde el backend
+                await this.loadFromBackend();
+
+                console.log('Jugada eliminada correctamente');
+            } catch (error) {
+                console.error('Error al eliminar jugada:', error);
+                alert(`Error al eliminar jugada: ${error.message}`);
+            }
         }
+        this.closeDeleteMoveModal();
     }
 
     //manejo de importacion csv

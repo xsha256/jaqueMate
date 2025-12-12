@@ -278,8 +278,7 @@ export async function obtenerJugadaPorId(id) {
 
 // Nueva jugada
 export async function crearJugada(jugadaData) {
-  console.log(jugadaData);
-  
+
   try {
     const response = await fetch(`${API_BASE_URL}${ENDPOINTS.JUGADAS}`, {
       method: 'POST',
@@ -294,6 +293,28 @@ export async function crearJugada(jugadaData) {
     return await response.json();
   } catch (error) {
     console.error('Error al crear jugada:', error);
+    throw error;
+  }
+}
+
+// Eliminar jugada
+export async function eliminarJugada(jugadaId) {
+  try {
+    const response = await fetch(`${API_BASE_URL}${ENDPOINTS.JUGADAS}/${jugadaId}`, {
+      method: 'DELETE',
+      headers: DEFAULT_HEADERS,
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new Error('Jugada no encontrada');
+      }
+      throw new Error(`Error HTTP: ${response.status}`);
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error al eliminar jugada:', error);
     throw error;
   }
 }

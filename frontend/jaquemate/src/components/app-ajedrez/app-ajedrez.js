@@ -14,16 +14,71 @@ class AppAjedrez extends HTMLElement {
     this.render();
     this.setupReferences();
     this.setupEventListeners();
+    this.cargarPosicionDesdeURL();
 
-    // Leer parámetro FEN si existe en la URL
-    const params = new URLSearchParams(window.location.hash.split('?')[1]);
-    const fen = params.get('fen');
-    if (fen) {
-      // Cargar la posición desde el FEN
-      this.tablero.posicion$.next(fen);
-      console.log('Posición cargada desde URL:', fen);
+    //Escuchar cambios
+    this.hashChangeHandler = () => {
+      if (window.location.hash === '#game' || window.location.hash.startsWith('#game?')) {
+        this.cargarPosicionDesdeURL();
+      }
+    };
+    window.addEventListener('hashchange', this.hashChangeHandler);
+  }
+
+  disconnectedCallback() {
+    if (this.hashChangeHandler) {
+      window.removeEventListener('hashchange', this.hashChangeHandler);
     }
   }
+
+  cargarPosicionDesdeURL() {
+    // Leer parámetros FEN y PGN si existen en la URL
+    const params = new URLSearchParams(window.location.hash.split('?')[1]);
+    const fen = params.get('fen');
+    const pgn = params.get('pgn');
+
+    if (fen) {
+      const fenDecodificado = decodeURIComponent(fen);
+
+      // Intentar cargar desde el pgn si existe
+      if (pgn && pgn.trim() !== '') {
+        try {
+          this.chess.loadPgn(decodeURIComponent(pgn));
+          this.tablero.posicion$.next(this.chess.fen());
+
+          // Limpiar el historial para que empiece desde esta posición
+          this.panel.actualizarHistorial([], true);
+          console.log('Posición cargada desde PGN:', pgn);
+          return;
+        } catch (e) {
+          console.error('Error al cargar PGN, intentando con FEN:', e);
+        }
+      }
+
+      // Si no hay pgn cargar  desde fen
+      try {
+        this.chess.load(fenDecodificado);
+        this.tablero.posicion$.next(this.chess.fen());
+
+        // Limpiar el historial 
+        this.panel.actualizarHistorial([], true);
+        console.log('Posición cargada desde FEN:', fen);
+      } catch (e) {
+        console.error('Error al cargar FEN:', e);
+        // Si hay error, mantener posición inicial
+        this.chess.reset();
+        this.tablero.posicion$.next(this.chess.fen());
+        this.actualizarHistorial();
+      }
+    } else {
+      // Si no hay fen reiniciar el tablero
+      this.chess.reset();
+      this.tablero.posicion$.next(this.chess.fen());
+      this.actualizarHistorial();
+      console.log('Tablero reiniciado a posición inicial');
+    }
+  }
+
 
   render() {
     this.innerHTML = `
@@ -31,6 +86,7 @@ class AppAjedrez extends HTMLElement {
         <div class="game-container">
           <div class="board-wrapper">
             <tablero-ajedrez id="tablero"></tablero-ajedrez>
+            <button id="btn-reiniciar" class="btn-reset">Reiniciar Juego</button>
           </div>
           <panel-control id="panel"></panel-control>
         </div>
@@ -54,6 +110,7 @@ class AppAjedrez extends HTMLElement {
     this.modalMensaje = this.querySelector('#modal-mensaje');
     this.modalIcon = this.querySelector('#modal-icon');
     this.btnNuevaPartida = this.querySelector('#btn-nueva-partida');
+    this.btnReiniciar = this.querySelector('#btn-reiniciar');
   }
 
   setupEventListeners() {
@@ -66,7 +123,11 @@ class AppAjedrez extends HTMLElement {
       this.reiniciarPartida();
     });
 
-    // Escuchar evento de Lista Jugadas - Ver tablero
+    this.btnReiniciar.addEventListener('click', () => {
+      this.reiniciarPartida();
+    });
+
+    // Escuchar evento de Lista Jugadas
     document.addEventListener('moveSelected', (evento) => {
       const { fen } = evento.detail;
       // Actualizar la posición del tablero
@@ -95,7 +156,7 @@ class AppAjedrez extends HTMLElement {
 
       // Guardar jugada en el backend
       const jugadaData = {
-        usuarioId: obtenerUsuarioId(), // ID del usuario logeado
+        usuarioId: obtenerUsuarioId(), // usuario logueadp
         fen: this.chess.fen(),
         moveUciFrom: desde,
         moveUciTo: hasta,
@@ -118,7 +179,12 @@ class AppAjedrez extends HTMLElement {
   actualizarHistorial() {
     const historial = this.chess.history({ verbose: true });
     const historialUCI = historial.map(mov => `${mov.from}${mov.to}${mov.promotion || ''}`);
-    this.panel.actualizarHistorial(historialUCI);
+
+    // Determinar el color del primer movimiento del historial
+    // Si no hay historial empieza con blancas
+    const primerMovimientoBlancas = historial.length === 0 || historial[0].color === 'w';
+
+    this.panel.actualizarHistorial(historialUCI, primerMovimientoBlancas);
   }
 
   verificarFinDeJuego() {
