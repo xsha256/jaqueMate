@@ -1,5 +1,6 @@
 /* GameHeader - WebComponent */
 import style from './GameHeader.css?inline';
+import { obtenerUsuarioId, limpiarUsuarioId, estaAutenticado } from '../../services/api.service.js';
 
 class GameHeader extends HTMLElement {
     constructor() {
@@ -77,8 +78,8 @@ class GameHeader extends HTMLElement {
     }
 
     handleLogout() {
-        // Eliminar token
-        localStorage.removeItem('access_token');
+        // Eliminar ID de usuario
+        limpiarUsuarioId();
         
         // Disparar evento personalizado
         window.dispatchEvent(new Event('authStateChanged'));
@@ -96,7 +97,7 @@ class GameHeader extends HTMLElement {
     }
 
     refreshHeader() {
-        const token = localStorage.getItem('access_token');
+        const estaAutenticadoUser = estaAutenticado();
         
         const botonJuego = this.shadowRoot.querySelector('#botonJuego');
         const botonListaJugadas = this.shadowRoot.querySelector('#botonListaJugadas');
@@ -105,22 +106,22 @@ class GameHeader extends HTMLElement {
         const loginLink = this.shadowRoot.querySelector('#loginLink');
         const registerLink = this.shadowRoot.querySelector('#registerLink');
 
-        if (token) {
+        if (estaAutenticadoUser) {
             // Usuario logeado
             botonLogout.removeAttribute('hidden');
             botonJuego.removeAttribute('hidden');
             botonListaJugadas.removeAttribute('hidden');
             botonPerfil.removeAttribute('hidden');
-            loginLink.parentElement.style.display = 'none';
-            registerLink.parentElement.style.display = 'none';
+            loginLink.setAttribute('hidden', true);
+            registerLink.setAttribute('hidden', true);
         } else {
             // Usuario NO logeado
             botonJuego.setAttribute('hidden', true);
             botonListaJugadas.setAttribute('hidden', true);
             botonPerfil.setAttribute('hidden', true);
             botonLogout.setAttribute('hidden', true);
-            loginLink.parentElement.style.display = 'block';
-            registerLink.parentElement.style.display = 'block';
+            loginLink.removeAttribute('hidden');
+            registerLink.removeAttribute('hidden');
         }
     }
 }

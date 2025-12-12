@@ -3,6 +3,7 @@
 //Es un WebComponent para el formulario de login
 
 import style from './GameLogin.css?inline';
+import { loginUsuario, guardarUsuarioId } from '../../services/api.service.js';
 
 class GameLogin extends HTMLElement {
     constructor() {
@@ -24,8 +25,8 @@ class GameLogin extends HTMLElement {
                 
                 <form id="loginForm">
                     <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" placeholder="tu@email.com" required>
+                        <label for="usuario">Usuario</label>
+                        <input type="text" id="usuario" name="usuario" placeholder="Tu usuario" required>
                     </div>
 
                     <div class="form-group">
@@ -60,26 +61,45 @@ class GameLogin extends HTMLElement {
         });
     }
 
-    handleLogin(event) {
+    async handleLogin(event) {
         event.preventDefault();
         
-        const email = this.shadowRoot.querySelector('#email').value;
+        const usuario = this.shadowRoot.querySelector('#usuario').value;
         const password = this.shadowRoot.querySelector('#password').value;
 
         // Validar campos
-        if (!email || !password) {
+        if (!usuario || !password) {
             alert('Todos los campos son obligatorios');
             return;
         }
 
-        // Aquí iría la llamada al backend para autenticarse
-        console.log('Intento de login:', { email, password });
-
-        // TO DO: Implementar llamada a API backend
-        // Si es exitoso, guardar token en localStorage
-        // localStorage.setItem('access_token', token);
-        // window.dispatchEvent(new Event('authStateChanged'));
-        // Navegar a home o game
+        try {
+            const response = await loginUsuario({ usuario, password });
+            
+            // Verificar si el login fue exitoso
+            if (response.message === 'Login exitoso' && response.usuario && response.usuario.id) {
+                // Guardar ID del usuario en localStorage
+                guardarUsuarioId(response.usuario.id);
+                
+                // Disparar evento de cambio de estado de autenticación
+                window.dispatchEvent(new Event('authStateChanged'));
+                
+                alert('¡Bienvenido!');
+                
+                // Navegar a home o game
+                const navigationEvent = new CustomEvent('navigate', {
+                    detail: { route: '#home' },
+                    bubbles: true,
+                    composed: true
+                });
+                this.dispatchEvent(navigationEvent);
+            } else {
+                alert('Error en el login. Intenta de nuevo.');
+            }
+        } catch (error) {
+            console.error('Error al iniciar sesión:', error);
+            alert(`Error: ${error.message}`);
+        }
     }
 
     handleNavigation(event) {

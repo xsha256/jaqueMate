@@ -1,6 +1,26 @@
 
 import { API_BASE_URL, DEFAULT_HEADERS, ENDPOINTS } from '../config/api.config.js';
 
+// ============ MANEJO DE AUTENTICACIÓN (ID de usuario) ============
+
+export function guardarUsuarioId(id) {
+  localStorage.setItem('usuarioId', id.toString());
+}
+
+export function obtenerUsuarioId() {
+  return localStorage.getItem('usuarioId');
+}
+
+export function limpiarUsuarioId() {
+  localStorage.removeItem('usuarioId');
+}
+
+export function estaAutenticado() {
+  return obtenerUsuarioId() !== null;
+}
+
+// ============ USUARIOS ============
+
 // USUARIOS
 export async function registrarUsuario(usuarioData) {
   try {
@@ -338,6 +358,33 @@ export async function confirmarImportacionJugadas(usuarioId, jugadas) {
     return await response.json();
   } catch (error) {
     console.error('Error al confirmar importación:', error);
+    throw error;
+  }
+}
+
+// ============ ACTUALIZAR PERFIL ============
+
+export async function actualizarPerfil(usuarioId, perfilData) {
+  try {
+    const response = await fetch(`${API_BASE_URL}${ENDPOINTS.USUARIOS}/perfil/${usuarioId}`, {
+      method: 'PUT',
+      headers: DEFAULT_HEADERS,
+      body: JSON.stringify(perfilData)
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new Error('Usuario no encontrado');
+      }
+      if (response.status === 409) {
+        throw new Error('El nombre de usuario ya está en uso');
+      }
+      throw new Error(`Error HTTP: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error al actualizar perfil:', error);
     throw error;
   }
 }

@@ -1,6 +1,7 @@
 /* GameProfile - webcomponent */
 
 import style from './GameProfile.css?inline';
+import { obtenerUsuarioId, actualizarPerfil, obtenerPerfilPorId } from '../../services/api.service.js';
 
 class GameProfile extends HTMLElement {
     constructor() {
@@ -25,8 +26,8 @@ class GameProfile extends HTMLElement {
                 <form id="profileForm">
                     <!-- Nombre -->
                     <div class="form-group">
-                        <label for="nombre">Nombre</label>
-                        <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required>
+                        <label for="usuario">Usuario</label>
+                        <input type="text" id="usuario" name="usuario" placeholder="Tu usuario" required>
                     </div>
 
                     <!-- Email (no editable) -->
@@ -138,29 +139,40 @@ class GameProfile extends HTMLElement {
     }
 
     async loadUserData() {
-        // TODO: Obtener datos del backend usando el token
-        // const token = localStorage.getItem('access_token');
-        // const response = await fetch('/api/user/profile', {
-        //     headers: { 'Authorization': `Bearer ${token}` }
-        // });
-        // const data = await response.json();
+        try {
+            const usuarioId = obtenerUsuarioId();
+            
+            if (!usuarioId) {
+                alert('No hay usuario autenticado');
+                return;
+            }
 
-        // Por ahora, valores dummy
-        this.shadowRoot.querySelector('#nombre').value = 'Usuario Demo';
-        this.shadowRoot.querySelector('#email').value = 'usuario@email.com';
+            const response = await obtenerPerfilPorId(usuarioId);
+            
+            if (response && response.usuario) {
+                const usuario = response.usuario;
+                this.shadowRoot.querySelector('#usuario').value = usuario.usuario || '';
+                this.shadowRoot.querySelector('#email').value = usuario.email || '';
+            } else {
+                alert('Error al cargar datos del perfil');
+            }
+        } catch (error) {
+            console.error('Error al cargar perfil:', error);
+            alert(`Error: ${error.message}`);
+        }
     }
 
     handleProfileUpdate(event) {
         event.preventDefault();
 
-        const nombre = this.shadowRoot.querySelector('#nombre').value;
+        const usuario = this.shadowRoot.querySelector('#usuario').value;
         const passwordActual = this.shadowRoot.querySelector('#passwordActual').value;
         const passwordNueva = this.shadowRoot.querySelector('#passwordNueva').value;
         const passwordConfirm = this.shadowRoot.querySelector('#passwordConfirm').value;
 
         // Validaciones
-        if (!nombre.trim()) {
-            alert('El nombre no puede estar vacío');
+        if (!usuario.trim()) {
+            alert('El usuario no puede estar vacío');
             return;
         }
 
@@ -169,16 +181,46 @@ class GameProfile extends HTMLElement {
             return;
         }
 
-        // TODO: Enviar actualización al backend
-        console.log('Actualizar perfil:', { 
-            nombre, 
-            cambiarPassword: !!passwordNueva,
-            passwordActual,
-            passwordNueva 
-        });
+        if (passwordNueva && passwordNueva.length < 6) {
+            alert('La contraseña debe tener al menos 6 caracteres');
+            return;
+        }
 
-        // Si es exitoso:
-        // alert('Perfil actualizado correctamente');
+        this.performProfileUpdate(usuario, passwordNueva);
+    }
+
+    async performProfileUpdate(usuario, passwordNueva) {
+        try {
+            const usuarioId = obtenerUsuarioId();
+            
+            if (!usuarioId) {
+                alert('No hay usuario autenticado');
+                return;
+            }
+
+            // Construir objeto de actualización
+            const perfilData = { usuario };
+            if (passwordNueva) {
+                perfilData.password = passwordNueva;
+            }
+
+            const response = await actualizarPerfil(usuarioId, perfilData);
+            
+            if (response && response.message) {
+                alert('Perfil actualizado correctamente');
+                
+                // Limpiar campos de contraseña
+                this.shadowRoot.querySelector('#passwordActual').value = '';
+                this.shadowRoot.querySelector('#passwordNueva').value = '';
+                this.shadowRoot.querySelector('#passwordConfirm').value = '';
+                this.validatePasswordMatch();
+            } else {
+                alert('Error al actualizar perfil');
+            }
+        } catch (error) {
+            console.error('Error al actualizar perfil:', error);
+            alert(`Error: ${error.message}`);
+        }
     }
 }
 
