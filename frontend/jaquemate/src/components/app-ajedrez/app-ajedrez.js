@@ -14,6 +14,15 @@ class AppAjedrez extends HTMLElement {
     this.render();
     this.setupReferences();
     this.setupEventListeners();
+
+    // Leer parámetro FEN si existe en la URL
+    const params = new URLSearchParams(window.location.hash.split('?')[1]);
+    const fen = params.get('fen');
+    if (fen) {
+      // Cargar la posición desde el FEN
+      this.tablero.posicion$.next(fen);
+      console.log('Posición cargada desde URL:', fen);
+    }
   }
 
   render() {
@@ -55,6 +64,14 @@ class AppAjedrez extends HTMLElement {
     this.btnNuevaPartida.addEventListener('click', () => {
       this.cerrarModal();
       this.reiniciarPartida();
+    });
+
+    // Escuchar evento de Lista Jugadas - Ver tablero
+    document.addEventListener('moveSelected', (evento) => {
+      const { fen } = evento.detail;
+      // Actualizar la posición del tablero
+      this.tablero.posicion$.next(fen);
+      console.log('Tablero actualizado con FEN:', fen);
     });
   }
 

@@ -374,17 +374,12 @@ class GameMoves extends HTMLElement {
 
     //ver jugada en tablero (emite evento)
     handleViewInBoard(move) {
-        const event = new CustomEvent('moveSelected', {
-            detail: {
-                player: move.player,
-                fen: move.fen,
-                uci: move.uci
-            },
-            bubbles: true,
-            composed: true
-        });
-        this.dispatchEvent(event);
-        console.log('moveSelected:', move.player, move.uci);
+        // Confirmar antes de navegar al tablero
+        if (confirm(`¿Ir al tablero a ver esta posición?`)) {
+            // Navegar a #game con el FEN codificado como parámetro
+            const fenEncodificado = encodeURIComponent(move.fen);
+            window.location.hash = `#game?fen=${fenEncodificado}`;
+        }
     }
 
     //eliminar jugada
