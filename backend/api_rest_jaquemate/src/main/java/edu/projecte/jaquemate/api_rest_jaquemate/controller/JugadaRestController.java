@@ -116,8 +116,18 @@ public class JugadaRestController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarJugada(@PathVariable Long id) {
-        jugadaService.eliminarJugada(id);
-        return ResponseEntity.noContent().build();
+        try {
+            Optional<JugadaInfo> jugadaExistente = jugadaService.findById(id);
+
+            if (jugadaExistente.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            jugadaService.eliminarJugada(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @GetMapping("/exportar/csv")

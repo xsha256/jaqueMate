@@ -10,9 +10,9 @@ import { router } from './router.js';
 // Esperar a que el DOM esté completamente cargado
 document.addEventListener('DOMContentLoaded', () => {
     // Obtener contenedores
-    const app = document.getElementById('app');
-    const contentContainer = document.getElementById('content');
-    const footerContainer = document.getElementById('footer');
+    const app = document.querySelector('#app');
+    const contentContainer = document.querySelector('#content');
+    const footerContainer = document.querySelector('#footer');
 
     // Renderizar header y footer (componentes persistentes)
     app.innerHTML = '<game-header></game-header>';
