@@ -13,22 +13,15 @@ const routes = new Map([
 ]);
 
 function router(route, container) {
-    if (routes.has(route)) {
-        // Obtiene el nombre del componente web y lo crea
-        const componentName = routes.get(route);
+
+    const baseRoute = route.split('?')[0]; //Para mostrar el tablero iniciado 
+
+    if (routes.has(baseRoute)) {
+        const componentName = routes.get(baseRoute);
         container.replaceChildren(document.createElement(componentName));
     } else {
         // Página no encontrada
         container.innerHTML = `<h2>404 - Página no encontrada</h2>`;
     }
 }
-
-/**
- * Rutas disponibles:
- * - '' o '#home' → game-home (a lapágina principal)
- * - '#game' → game-board (el juego en si)
- * - '#moves' → game-moves (lista de jugadas total)
- * - '#login' → game-login (formulario de login)
- * - '#register' → game-register (formulario de registro)
- */
 

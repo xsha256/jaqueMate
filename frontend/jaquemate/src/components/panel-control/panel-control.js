@@ -1,5 +1,7 @@
 import './panel-control.css';
 
+export { PanelControl };
+
 class PanelControl extends HTMLElement {
   constructor() {
     super();
@@ -41,17 +43,29 @@ class PanelControl extends HTMLElement {
     });
   }
 
-  actualizarHistorial(movimientos) {
+  actualizarHistorial(movimientos, primerMovimientoBlancas = true) {
     const movesList = this.querySelector('.moves-list');
 
     if (movimientos.length > 0) {
       movesList.innerHTML = movimientos
         .map((mov, idx) => {
-          const moveNumber = Math.floor(idx / 2) + 1;
-          const isWhite = idx % 2 === 0;
+          // primer movimiento -> blancas: idx par = blancas, impar = negras
+          // primer movimiento -> negras: idx par = negras, impar = blancas
+          const isWhite = primerMovimientoBlancas ? (idx % 2 === 0) : (idx % 2 !== 0);
+
+          // Calcular el número del movimiento
+          let moveNumber;
+          if (primerMovimientoBlancas) {
+            moveNumber = Math.floor(idx / 2) + 1;
+          } else {
+            // Si empieza con negras, el primer movimiento es el movimiento X de negras
+            moveNumber = Math.floor((idx + 1) / 2) + 1;
+          }
+
           const colorIcon = isWhite
             ? '<span class="color-indicator white"></span>'
             : '<span class="color-indicator black"></span>';
+
           return `<li>${moveNumber}. ${colorIcon} ${mov}</li>`;
         })
         .join('');
@@ -74,5 +88,3 @@ class PanelControl extends HTMLElement {
     }
   }
 }
-
-export { PanelControl };

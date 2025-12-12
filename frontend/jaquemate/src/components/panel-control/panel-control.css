@@ -144,3 +144,20 @@ panel-control .empty-message {
   text-align: center;
   padding: 2rem;
 }
+
+panel-control .fen-initial {
+  background-color: #1f4d3a !important;
+  border-color: #27ae60 !important;
+  color: #d1fae5 !important;
+  font-style: italic;
+}
+
+panel-control .fen-initial:hover {
+  background-color: #27ae60 !important;
+  color: #0d0d0d !important;
+}
+
+panel-control .fen-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
