@@ -24,26 +24,50 @@ class GameHeader extends HTMLElement {
     }
 
     render() {
-        const template = document.createElement('template'); 
+        const estaAutenticadoUser = estaAutenticado();
+        const template = document.createElement('template');
+        
+        // Construir HTML dinámicamente según autenticación
+        let botonesIzquierda = `
+            <a href="#home" class="nav-btn logo">JaqueMate</a>
+        `;
+        
+        if (estaAutenticadoUser) {
+            botonesIzquierda += `
+                <a href="#game" class="nav-btn" id="botonJuego">Juego</a>
+                <a href="#moves" class="nav-btn" id="botonListaJugadas">Lista Jugadas</a>
+            `;
+        }
+        
+        let botonesDerechos = '';
+        if (estaAutenticadoUser) {
+            botonesDerechos = `
+                <a href="#profile" class="nav-btn" id="botonPerfil">Perfil</a>
+                <button class="nav-btn logout-btn" id="botonLogout">Logout</button>
+            `;
+        } else {
+            botonesDerechos = `
+                <a href="#login" class="nav-btn" id="loginLink">Login</a>
+                <a href="#register" class="nav-btn" id="registerLink">Registro</a>
+            `;
+        }
+        
         template.innerHTML = `
             <style>${style}</style> 
             <header>
                 <nav>
                     <div class="nav-left">
-                        <a href="#home" class="nav-btn logo">JaqueMate</a>
-                        <a href="#game" class="nav-btn" id="botonJuego" hidden>Juego</a>
-                        <a href="#moves" class="nav-btn" id="botonListaJugadas" hidden>Lista Jugadas</a>
+                        ${botonesIzquierda}
                     </div>
                     <div class="nav-right">
-                        <a href="#login" class="nav-btn" id="loginLink">Login</a>
-                        <a href="#register" class="nav-btn" id="registerLink">Registro</a>
-                        <a href="#profile" class="nav-btn" id="botonPerfil" hidden>Perfil</a>
-                        <button class="nav-btn logout-btn" id="botonLogout" hidden>Logout</button>
+                        ${botonesDerechos}
                     </div>
                 </nav>
             </header>
         `;
 
+        // Limpiar shadowRoot antes de agregar nuevo contenido (evita duplicados)
+        this.shadowRoot.innerHTML = '';
         this.shadowRoot.appendChild(template.content.cloneNode(true));
         this.attachEventListeners();
     }
@@ -57,11 +81,13 @@ class GameHeader extends HTMLElement {
             });
         });
 
-        // Evento para botón logout
+        // Evento para botón logout (solo si existe)
         const logoutBtn = this.shadowRoot.querySelector('#botonLogout');
-        logoutBtn.addEventListener('click', () => {
-            this.handleLogout();
-        });
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                this.handleLogout();
+            });
+        }
     }
 
     handleNavigation(event) {
@@ -97,32 +123,8 @@ class GameHeader extends HTMLElement {
     }
 
     refreshHeader() {
-        const estaAutenticadoUser = estaAutenticado();
-        
-        const botonJuego = this.shadowRoot.querySelector('#botonJuego');
-        const botonListaJugadas = this.shadowRoot.querySelector('#botonListaJugadas');
-        const botonPerfil = this.shadowRoot.querySelector('#botonPerfil');
-        const botonLogout = this.shadowRoot.querySelector('#botonLogout');
-        const loginLink = this.shadowRoot.querySelector('#loginLink');
-        const registerLink = this.shadowRoot.querySelector('#registerLink');
-
-        if (estaAutenticadoUser) {
-            // Usuario logeado
-            botonLogout.removeAttribute('hidden');
-            botonJuego.removeAttribute('hidden');
-            botonListaJugadas.removeAttribute('hidden');
-            botonPerfil.removeAttribute('hidden');
-            loginLink.setAttribute('hidden', true);
-            registerLink.setAttribute('hidden', true);
-        } else {
-            // Usuario NO logeado
-            botonJuego.setAttribute('hidden', true);
-            botonListaJugadas.setAttribute('hidden', true);
-            botonPerfil.setAttribute('hidden', true);
-            botonLogout.setAttribute('hidden', true);
-            loginLink.removeAttribute('hidden');
-            registerLink.removeAttribute('hidden');
-        }
+        // Simplemente vuelve a renderizar para actualizar los botones según el estado de autenticación
+        this.render();
     }
 }
 
