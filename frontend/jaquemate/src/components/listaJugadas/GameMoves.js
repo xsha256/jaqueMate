@@ -2,7 +2,7 @@
 
 import style from './GameMoves.css?inline';
 import { movesObservable } from '../../observables/movesObservable.js';
-import { obtenerJugadasPorUsuarioId, obtenerUsuarioId, importarJugadasCSV, confirmarImportacionJugadas, eliminarJugada } from '../../services/api.service.js';
+import { obtenerTodasJugadas, obtenerUsuarioId, importarJugadasCSV, confirmarImportacionJugadas, eliminarJugada } from '../../services/api.service.js';
 
 class GameMoves extends HTMLElement {
     constructor() {
@@ -21,6 +21,7 @@ class GameMoves extends HTMLElement {
         this.unsubscribe = null;
         this.pendingMoveToView = null;
         this.pendingMoveToDelete = null;
+        this.filterDebounceTimer = null;
     }
 
     connectedCallback() {
@@ -33,6 +34,9 @@ class GameMoves extends HTMLElement {
     disconnectedCallback() {
         if (this.unsubscribe) {
             this.unsubscribe();
+        }
+        if (this.filterDebounceTimer) {
+            clearTimeout(this.filterDebounceTimer);
         }
     }
 
@@ -96,16 +100,18 @@ class GameMoves extends HTMLElement {
                 <!-- Modal para Preview de CSV -->
                 <div class="modal-overlay" id="csvModal">
                     <div class="modal">
-                        <div class="modal-header">Vista Previa de CSV</div>
-                        <p style="color: var(--color-text-secondary); margin-bottom: 1rem;">
-                            Se importarán <span id="csvPreviewCount">0</span> jugada(s)
+                        <div class="modal-header">Vista Previa de Importación CSV</div>
+                        <p style="color: var(--color-text-secondary); margin-bottom: 1.5rem; text-align: center; font-size: 1rem;">
+                            Se importarán <span class="csv-preview-count" id="csvPreviewCount">0</span> jugada(s)
                         </p>
                         <table class="modal-preview-table" id="csvPreviewTable">
                             <thead>
                                 <tr>
+                                    <th>#</th>
                                     <th>Jugador</th>
                                     <th>FEN</th>
                                     <th>UCI</th>
+                                    <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody id="csvPreviewBody">
@@ -152,11 +158,21 @@ class GameMoves extends HTMLElement {
     }
 
     attachEventListeners() {
-        //filtro
+        //filtro con debounce
         this.shadowRoot.querySelector('#playerFilter').addEventListener('input', (e) => {
-            this.filterPlayer = e.target.value.toLowerCase();
-            this.currentPage = 1;
-            this.applyFilters();
+            const value = e.target.value.toLowerCase();
+
+            // Limpiar el timer anterior si existe
+            if (this.filterDebounceTimer) {
+                clearTimeout(this.filterDebounceTimer);
+            }
+
+            // Crear nuevo timer con debounce de 300ms
+            this.filterDebounceTimer = setTimeout(() => {
+                this.filterPlayer = value;
+                this.currentPage = 1;
+                this.applyFilters();
+            }, 300);
         });
 
         //ordenamiento
@@ -214,15 +230,8 @@ class GameMoves extends HTMLElement {
     // Cargar datos del backend
     async loadFromBackend() {
         try {
-            const usuarioId = obtenerUsuarioId();
-            
-            if (!usuarioId) {
-                alert('No hay usuario logeado. Por favor, inicia sesión.');
-                return;
-            }
-
-            // Llamar al backend para obtener jugadas del usuario
-            const response = await obtenerJugadasPorUsuarioId(usuarioId, {
+            // Llamar al backend para obtener todas las jugadas de todos los usuarios
+            const response = await obtenerTodasJugadas({
                 page: 0,
                 size: 100, // Cargar más jugadas por defecto
                 sort: ['createdAt,desc'] // Más recientes primero
@@ -457,8 +466,6 @@ class GameMoves extends HTMLElement {
 
                 // Recargar la lista desde el backend
                 await this.loadFromBackend();
-
-                console.log('Jugada eliminada correctamente');
             } catch (error) {
                 console.error('Error al eliminar jugada:', error);
                 alert(`Error al eliminar jugada: ${error.message}`);
@@ -530,17 +537,74 @@ class GameMoves extends HTMLElement {
     showCSVPreview() {
         const modal = this.shadowRoot.querySelector('#csvModal');
         const tbody = this.shadowRoot.querySelector('#csvPreviewBody');
-        
-        tbody.innerHTML = this.csvPreviewData.map((move) => `
-            <tr>
+
+        tbody.innerHTML = this.csvPreviewData.map((move, index) => `
+            <tr data-csv-index="${index}">
+                <td style="font-weight: bold;">${index + 1}</td>
                 <td>${this.escapeHtml(move.player)}</td>
-                <td>${this.escapeHtml(move.fen)}</td>
-                <td>${move.uci}</td>
+                <td class="fen-preview" title="${this.escapeHtml(move.fen)}">${this.escapeHtml(move.fen)}</td>
+                <td class="uci-preview">${move.uci}</td>
+                <td>
+                    <button class="csv-delete-btn" data-csv-index="${index}">🗑 Eliminar</button>
+                </td>
             </tr>
         `).join('');
 
-        this.shadowRoot.querySelector('#csvPreviewCount').textContent = this.csvPreviewData.length;
+        // Añadir event listeners a los botones de eliminar
+        tbody.querySelectorAll('.csv-delete-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const index = parseInt(e.target.dataset.csvIndex);
+                this.removeCSVPreviewRow(index);
+            });
+        });
+
+        this.updateCSVPreviewCount();
         modal.classList.add('active');
+    }
+
+    //eliminar una fila del preview del csv
+    removeCSVPreviewRow(index) {
+        // Eliminar del array de datos
+        this.csvPreviewData.splice(index, 1);
+
+        // Re-renderizar la tabla
+        const tbody = this.shadowRoot.querySelector('#csvPreviewBody');
+        tbody.innerHTML = this.csvPreviewData.map((move, idx) => `
+            <tr data-csv-index="${idx}">
+                <td style="font-weight: bold;">${idx + 1}</td>
+                <td>${this.escapeHtml(move.player)}</td>
+                <td class="fen-preview" title="${this.escapeHtml(move.fen)}">${this.escapeHtml(move.fen)}</td>
+                <td class="uci-preview">${move.uci}</td>
+                <td>
+                    <button class="csv-delete-btn" data-csv-index="${idx}">🗑 Eliminar</button>
+                </td>
+            </tr>
+        `).join('');
+
+        // Re-añadir event listeners
+        tbody.querySelectorAll('.csv-delete-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = parseInt(e.target.dataset.csvIndex);
+                this.removeCSVPreviewRow(idx);
+            });
+        });
+
+        this.updateCSVPreviewCount();
+
+        // Si no quedan jugadas, cerrar el modal
+        if (this.csvPreviewData.length === 0) {
+            this.closeCSVModal();
+            this.showNotification(
+                'Sin Jugadas',
+                'No quedan jugadas para importar',
+                'error'
+            );
+        }
+    }
+
+    //actualizar contador de jugadas en el modal
+    updateCSVPreviewCount() {
+        this.shadowRoot.querySelector('#csvPreviewCount').textContent = this.csvPreviewData.length;
     }
 
     //cerrar modal de csv
@@ -554,39 +618,59 @@ class GameMoves extends HTMLElement {
         try {
             const usuarioId = obtenerUsuarioId();
             if (!usuarioId) {
-                alert('Error: Usuario no autenticado');
+                this.showNotification(
+                    'Error de Autenticación',
+                    'Debes iniciar sesión para importar jugadas',
+                    'error'
+                );
                 return;
             }
 
-            // 1. Enviar archivo al backend para importación
-            const importResponse = await importarJugadasCSV(this.csvFile, usuarioId);
-            console.log('Respuesta de importación:', importResponse);
+            // Transformar los datos al formato esperado por el backend
+            // Backend espera: { fen: string, jugadas: string }
+            // Frontend tiene: { player: string, fen: string, uci: string }
+            const jugadasParaBackend = this.csvPreviewData.map(jugada => ({
+                fen: jugada.fen,
+                jugadas: jugada.uci  // El backend llama "jugadas" al campo UCI
+            }));
 
-            // 2. Confirmar la importación con los datos parseados
-            const confirmResponse = await confirmarImportacionJugadas(usuarioId, this.csvPreviewData);
-            console.log('Respuesta de confirmación:', confirmResponse);
-
-            // 3. Mostrar mensaje de éxito
-            alert(`${this.csvPreviewData.length} jugada(s) importada(s) correctamente`);
-
-            // 4. Recargar la lista de jugadas desde la BD
-            await this.loadFromBackend();
-
-            // 5. Cerrar modal y limpiar
+            // Confirmar la importación con los datos parseados
+            const confirmResponse = await confirmarImportacionJugadas(usuarioId, jugadasParaBackend);
+            
+            // Cerrar modal y limpiar ANTES de mostrar la notificación
             this.closeCSVModal();
             this.shadowRoot.querySelector('#csvFileInput').value = '';
             this.csvFile = null;
+            const cantidadImportadas = this.csvPreviewData.length;
             this.csvPreviewData = [];
+
+            // Mostrar mensaje de éxito
+            this.showNotification(
+                'Importación Exitosa',
+                `${cantidadImportadas} jugada(s) importada(s) correctamente`,
+                'success'
+            );
+
+            // Recargar la lista de jugadas desde la BD
+            await this.loadFromBackend();
         } catch (error) {
             console.error('Error al confirmar importación CSV:', error);
-            alert(`Error al importar CSV: ${error.message}`);
+            this.showNotification(
+                'Error al Importar',
+                error.message || 'No se pudieron importar las jugadas',
+                'error'
+            );
         }
     }
 
     //exportar a csv
     exportToCSV() {
         if (this.filteredMoves.length === 0) {
-            alert('No hay jugadas para exportar');
+            this.showNotification(
+                'Sin Jugadas',
+                'No hay jugadas para exportar',
+                'error'
+            );
             return;
         }
 
@@ -610,6 +694,41 @@ class GameMoves extends HTMLElement {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+
+    //mostrar notificacion toast
+    showNotification(title, message, type = 'success') {
+        // Eliminar notificación existente si hay alguna
+        const existingNotification = this.shadowRoot.querySelector('.notification');
+        if (existingNotification) {
+            existingNotification.remove();
+        }
+
+        // Crear contenedor de notificación
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+
+        // Icono según el tipo
+        const icon = type === 'success' ? '✓' : '✕';
+
+        notification.innerHTML = `
+            <div class="notification-icon">${icon}</div>
+            <div class="notification-content">
+                <div class="notification-title">${title}</div>
+                <div class="notification-message">${message}</div>
+            </div>
+        `;
+
+        // Agregar al shadow DOM
+        this.shadowRoot.appendChild(notification);
+
+        // Auto-remover después de 4 segundos
+        setTimeout(() => {
+            notification.classList.add('hide');
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 4000);
     }
 }
 

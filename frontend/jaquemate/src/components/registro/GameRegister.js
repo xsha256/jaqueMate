@@ -103,9 +103,6 @@ class GameRegister extends HTMLElement {
         try {
             const response = await registrarUsuario({ usuario, email, password });
 
-            // Log para debug - ver qué devuelve el backend
-            console.log('Respuesta del registro:', response);
-
             // Verificar si el registro fue exitoso
             // La respuesta puede tener diferentes estructuras, verificamos todas las posibilidades
             const registroExitoso = response && (

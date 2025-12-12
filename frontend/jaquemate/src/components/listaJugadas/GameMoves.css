@@ -287,10 +287,11 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.85);
     z-index: 1000;
     justify-content: center;
     align-items: center;
+    backdrop-filter: blur(4px);
 }
 
 .modal-overlay.active {
@@ -299,30 +300,47 @@
 
 .modal {
     background-color: var(--color-bg-secondary);
-    border: 2px solid var(--color-text-red);
-    padding: 1.5rem;
-    max-width: 600px;
-    max-height: 70vh;
+    border: 3px solid var(--color-text-red);
+    padding: 2rem;
+    max-width: 900px;
+    max-height: 85vh;
     overflow-y: auto;
-    width: 85%;
+    width: 90%;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .modal-header {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     color: var(--color-text-red);
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     font-weight: bold;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .modal-preview-table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 1.5rem;
+    border: 1px solid var(--color-border);
 }
 
 .modal-preview-table th,
 .modal-preview-table td {
-    padding: 0.6rem;
+    padding: 0.8rem;
     border-bottom: 1px solid var(--color-border);
 }
 
@@ -331,12 +349,52 @@
     color: var(--color-text-red);
     font-weight: 600;
     text-align: center;
+    font-size: 0.95rem;
 }
 
 .modal-preview-table td {
-    text-align: left;
+    text-align: center;
     color: var(--color-text-primary);
-    font-size: 0.85rem;
+    font-size: 0.9rem;
+}
+
+.modal-preview-table tbody tr:hover {
+    background-color: var(--color-hover);
+}
+
+.modal-preview-table td.fen-preview {
+    font-family: monospace;
+    font-size: 0.8rem;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.modal-preview-table td.uci-preview {
+    font-family: monospace;
+    font-weight: 600;
+}
+
+.csv-delete-btn {
+    padding: 0.4rem 0.8rem;
+    background-color: var(--color-text-red);
+    color: white;
+    border: none;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-weight: 600;
+}
+
+.csv-delete-btn:hover {
+    background-color: #8b1628;
+}
+
+.csv-preview-count {
+    color: var(--color-text-red);
+    font-weight: bold;
+    font-size: 1.1rem;
 }
 
 .modal-actions {
@@ -370,4 +428,82 @@
 
 .modal-btn.cancel:hover {
     background-color: #8b1628;
+}
+
+/* Notificaciones toast */
+.notification {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    padding: 1.25rem 2rem;
+    border-radius: 8px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 300px;
+    max-width: 500px;
+    animation: slideIn 0.3s ease-out;
+    z-index: 2000;
+    border-left: 5px solid var(--notification-border-color);
+    background-color: var(--notification-bg-color);
+    color: var(--notification-text-color);
+}
+
+.notification.success {
+    --notification-border-color: #10b981;
+    --notification-bg-color: #064e3b;
+    --notification-text-color: #d1fae5;
+}
+
+.notification.error {
+    --notification-border-color: #ef4444;
+    --notification-bg-color: #7f1d1d;
+    --notification-text-color: #fecaca;
+}
+
+.notification-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+}
+
+.notification-message {
+    font-size: 0.95rem;
+    opacity: 0.9;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.notification.hide {
+    animation: slideOut 0.3s ease-in forwards;
 }

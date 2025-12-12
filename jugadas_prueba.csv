@@ -1,0 +1,16 @@
+player,fen,uci
+Magnus,"rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1",e2e4
+Hikaru,"rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq e6 0 2",e7e5
+Fabiano,"rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2",g1f3
+Alireza,"r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3",b8c6
+Ding,"r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3",f1b5
+Carlsen,"r1bqkb1r/pppp1ppp/2n2n2/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4",g8f6
+Nakamura,"r1bqkb1r/pppp1ppp/2n2n2/1B2p3/4P3/5N2/PPPP1PPP/RNBQ1RK1 b kq - 5 4",e1g1
+Caruana,"r1bqk2r/pppp1ppp/2n2n2/1Bb1p3/4P3/5N2/PPPP1PPP/RNBQ1RK1 w kq - 6 5",f8c5
+Firouzja,"r1bqk2r/pppp1ppp/2n2n2/1Bb1p3/4P3/2P2N2/PP1P1PPP/RNBQ1RK1 b kq - 0 5",c2c3
+Nepo,"r1bqk2r/ppp2ppp/2n2n2/1Bbpp3/4P3/2P2N2/PP1P1PPP/RNBQ1RK1 w kq d6 0 6",d7d5
+Giri,"r1bqk2r/ppp2ppp/2n2n2/1Bbpp3/1P2P3/2P2N2/P2P1PPP/RNBQ1RK1 b kq b3 0 6",b2b4
+Anand,"r1bqk2r/ppp2ppp/2n2n2/2bpp3/1PB1P3/2P2N2/P2P1PPP/RNBQ1RK1 w kq - 1 7",c5b4
+Wesley,"r1bqk2r/ppp2ppp/2n2n2/3pp3/1Pb1P3/2P2N2/P2P1PPP/RNBQ1RK1 b kq - 0 7",c3b4
+Aronian,"r1bqk2r/ppp2ppp/5n2/3pp3/1Pn1P3/5N2/P2P1PPP/RNBQ1RK1 w kq - 0 8",c6b4
+MVL,"r1bqk2r/ppp2ppp/5n2/3pN3/1Pn1P3/8/P2P1PPP/RNBQ1RK1 b kq - 0 8",f3d5

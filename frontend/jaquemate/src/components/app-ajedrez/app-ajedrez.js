@@ -48,7 +48,6 @@ class AppAjedrez extends HTMLElement {
 
           // Limpiar el historial para que empiece desde esta posición
           this.panel.actualizarHistorial([], true);
-          console.log('Posición cargada desde PGN:', pgn);
           return;
         } catch (e) {
           console.error('Error al cargar PGN, intentando con FEN:', e);
@@ -62,7 +61,6 @@ class AppAjedrez extends HTMLElement {
 
         // Limpiar el historial 
         this.panel.actualizarHistorial([], true);
-        console.log('Posición cargada desde FEN:', fen);
       } catch (e) {
         console.error('Error al cargar FEN:', e);
         // Si hay error, mantener posición inicial
@@ -75,7 +73,6 @@ class AppAjedrez extends HTMLElement {
       this.chess.reset();
       this.tablero.posicion$.next(this.chess.fen());
       this.actualizarHistorial();
-      console.log('Tablero reiniciado a posición inicial');
     }
   }
 
@@ -132,7 +129,6 @@ class AppAjedrez extends HTMLElement {
       const { fen } = evento.detail;
       // Actualizar la posición del tablero
       this.tablero.posicion$.next(fen);
-      console.log('Tablero actualizado con FEN:', fen);
     });
   }
 
@@ -166,7 +162,6 @@ class AppAjedrez extends HTMLElement {
 
       try {
         await crearJugada(jugadaData);
-        console.log('Jugada guardada correctamente');
       } catch (error) {
         console.error('Error al guardar jugada:', error);
       }
@@ -207,7 +202,6 @@ class AppAjedrez extends HTMLElement {
       }, 300);
     } else if (this.chess.isCheck()) {
       const jugadorEnJaque = this.chess.turn() === 'w' ? 'Blancas' : 'Negras';
-      console.log(`¡Jaque a las ${jugadorEnJaque}!`);
     }
   }
 
@@ -233,6 +227,9 @@ class AppAjedrez extends HTMLElement {
   }
 
   reiniciarPartida() {
+    // Limpiar la URL
+    window.location.hash = '#game';
+
     this.chess.reset();
     this.tablero.posicion$.next(this.chess.fen());
     this.actualizarHistorial();

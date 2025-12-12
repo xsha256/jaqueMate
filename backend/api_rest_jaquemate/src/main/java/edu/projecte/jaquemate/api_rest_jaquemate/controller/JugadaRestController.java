@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -111,6 +112,22 @@ public class JugadaRestController {
     public ResponseEntity<JugadaInfo> crearJugada(@Valid @RequestBody JugadaCreate jugadaCreate) {
         JugadaInfo nuevaJugada = jugadaService.crearJugada(jugadaCreate);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevaJugada);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarJugada(@PathVariable Long id) {
+        try {
+            Optional<JugadaInfo> jugadaExistente = jugadaService.findById(id);
+
+            if (jugadaExistente.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            jugadaService.eliminarJugada(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @GetMapping("/exportar/csv")

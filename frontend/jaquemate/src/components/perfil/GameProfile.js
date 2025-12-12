@@ -149,8 +149,6 @@ class GameProfile extends HTMLElement {
 
             const response = await obtenerPerfilPorId(usuarioId);
 
-            console.log('Datos del perfil cargados:', response);
-
             // El backend devuelve los datos directamente: {id, usuario, email, creado}
             if (response && (response.id || response.email)) {
                 // Cargar datos en los campos (excepto contraseña)
