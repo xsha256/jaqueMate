@@ -72,7 +72,7 @@ class GameRegister extends HTMLElement {
 
     handleRegister(event) {
         event.preventDefault();
-        
+
         const usuario = this.shadowRoot.querySelector('#usuario').value;
         const email = this.shadowRoot.querySelector('#email').value;
         const password = this.shadowRoot.querySelector('#password').value;
@@ -80,19 +80,19 @@ class GameRegister extends HTMLElement {
 
         // Validar campos
         if (!usuario || !email || !password || !confirmPassword) {
-            alert('Todos los campos son obligatorios');
+            this.showNotification('Error', 'Todos los campos son obligatorios', 'error');
             return;
         }
 
         // Validar que las contraseñas coincidan
         if (password !== confirmPassword) {
-            alert('Las contraseñas no coinciden');
+            this.showNotification('Error', 'Las contraseñas no coinciden', 'error');
             return;
         }
 
         // Validar longitud mínima
         if (password.length < 6) {
-            alert('La contraseña debe tener al menos 6 caracteres');
+            this.showNotification('Error', 'La contraseña debe tener al menos 6 caracteres', 'error');
             return;
         }
 
@@ -102,35 +102,42 @@ class GameRegister extends HTMLElement {
     async performRegister(usuario, email, password) {
         try {
             const response = await registrarUsuario({ usuario, email, password });
-            
+
+            // Log para debug - ver qué devuelve el backend
+            console.log('Respuesta del registro:', response);
+
             // Verificar si el registro fue exitoso
-            if (response.message === 'Usuario registrado exitosamente' && response.usuario && response.usuario.id) {
-                // Guardar ID del usuario en localStorage
-                guardarUsuarioId(response.usuario.id);
-                
-                // Disparar evento de cambio de estado de autenticación
-                window.dispatchEvent(new Event('authStateChanged'));
-                
-                alert('¡Registro exitoso! Bienvenido.');
-                
-                // Navegar a home o game
-                const navigationEvent = new CustomEvent('navigate', {
-                    detail: { route: '#home' },
-                    bubbles: true,
-                    composed: true
-                });
-                this.dispatchEvent(navigationEvent);
+            // La respuesta puede tener diferentes estructuras, verificamos todas las posibilidades
+            const registroExitoso = response && (
+                (response.usuario && response.usuario.id) || // Formato: {usuario: {id: ...}}
+                response.id || // Formato directo: {id: ...}
+                (response.message && response.message.toLowerCase().includes('exitoso')) // Por mensaje
+            );
+
+            if (registroExitoso) {
+                // Mostrar notificación de éxito
+                this.showNotification('¡Registro exitoso!', 'Ahora puedes iniciar sesión con tus credenciales', 'success');
+
+                // Redirigir a login después de un breve delay
+                setTimeout(() => {
+                    const navigationEvent = new CustomEvent('navigate', {
+                        detail: { route: '#login' },
+                        bubbles: true,
+                        composed: true
+                    });
+                    this.dispatchEvent(navigationEvent);
+                }, 2000);
             } else {
-                alert('Error en el registro. Intenta de nuevo.');
+                this.showNotification('Error', 'No se pudo completar el registro. Intenta de nuevo.', 'error');
             }
         } catch (error) {
             console.error('Error al registrarse:', error);
-            
-            // Mostrar mensaje de error específico si es un usuario duplicado
-            if (error.message.includes('409') || error.message.includes('duplicado')) {
-                alert('El usuario o email ya existe. Intenta con otro.');
+
+            // Mostrar mensaje de error específico
+            if (error.message.includes('409') || error.message.includes('duplicado') || error.message.includes('ya existe')) {
+                this.showNotification('Usuario duplicado', 'El usuario o email ya está registrado. Intenta con otro.', 'error');
             } else {
-                alert(`Error: ${error.message}`);
+                this.showNotification('Error', error.message || 'Ocurrió un error al registrar el usuario', 'error');
             }
         }
     }
@@ -138,7 +145,7 @@ class GameRegister extends HTMLElement {
     handleNavigation(event) {
         event.preventDefault();
         const href = event.target.getAttribute('href');
-        
+
         // Disparar evento personalizado para que el router maneje la navegación
         const navigationEvent = new CustomEvent('navigate', {
             detail: { route: href },
@@ -146,6 +153,40 @@ class GameRegister extends HTMLElement {
             composed: true
         });
         this.dispatchEvent(navigationEvent);
+    }
+
+    showNotification(title, message, type = 'success') {
+        // Eliminar notificación existente si hay alguna
+        const existingNotification = this.shadowRoot.querySelector('.notification');
+        if (existingNotification) {
+            existingNotification.remove();
+        }
+
+        // Crear contenedor de notificación
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+
+        // Icono según el tipo
+        const icon = type === 'success' ? '✓' : '✕';
+
+        notification.innerHTML = `
+            <div class="notification-icon">${icon}</div>
+            <div class="notification-content">
+                <div class="notification-title">${title}</div>
+                <div class="notification-message">${message}</div>
+            </div>
+        `;
+
+        // Agregar al shadow DOM
+        this.shadowRoot.appendChild(notification);
+
+        // Auto-remover después de 4 segundos
+        setTimeout(() => {
+            notification.classList.add('hide');
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 4000);
     }
 }
 
