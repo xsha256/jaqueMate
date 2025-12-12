@@ -152,8 +152,4 @@ class TableroAjedrez extends HTMLElement {
   }
 }
 
-if (!customElements.get('tablero-ajedrez')) {
-  customElements.define('tablero-ajedrez', TableroAjedrez);
-}
-
 export { TableroAjedrez };

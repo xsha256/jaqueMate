@@ -5,7 +5,7 @@ export { router };
 const routes = new Map([
     ['', 'game-home'],
     ['#home', 'game-home'],
-    ['#game', 'game-board'],
+    ['#game', 'app-ajedrez'],
     ['#moves', 'game-moves'],
     ['#profile', 'game-profile'],
     ['#login', 'game-login'],

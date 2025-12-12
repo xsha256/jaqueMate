@@ -110,7 +110,7 @@ class AppAjedrez extends HTMLElement {
       const ganador = this.chess.turn() === 'w' ? 'Negras' : 'Blancas';
       setTimeout(() => {
         this.mostrarModal('¡Jaque Mate!', `${ganador} ganan la partida`, 'victoria');
-      }, 300);
+      }, 100);
     } else if (this.chess.isDraw()) {
       let razon = 'Tablas';
       if (this.chess.isStalemate()) {
@@ -155,10 +155,6 @@ class AppAjedrez extends HTMLElement {
     this.tablero.posicion$.next(this.chess.fen());
     this.actualizarHistorial();
   }
-}
-
-if (!customElements.get('app-ajedrez')) {
-  customElements.define('app-ajedrez', AppAjedrez);
 }
 
 export { AppAjedrez };

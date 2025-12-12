@@ -75,8 +75,4 @@ class PanelControl extends HTMLElement {
   }
 }
 
-if (!customElements.get('panel-control')) {
-  customElements.define('panel-control', PanelControl);
-}
-
 export { PanelControl };

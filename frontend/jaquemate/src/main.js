@@ -6,7 +6,6 @@ import './webComponents.js';
 
 // Importar el router
 import { router } from './router.js';
-import { AppAjedrez } from './components/app-ajedrez/app-ajedrez.js';
 
 // Esperar a que el DOM esté completamente cargado
 document.addEventListener('DOMContentLoaded', () => {
@@ -29,9 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
     router('', contentContainer);
 });
 
-if (!customElements.get('app-ajedrez')) {
-  customElements.define('app-ajedrez', AppAjedrez);
-}
 /**
  * Archivo principal de la aplicación JaqueMate
  * 
