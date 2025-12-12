@@ -2,6 +2,7 @@
 
 import style from './GameMoves.css?inline';
 import { movesObservable } from '../../observables/movesObservable.js';
+import { obtenerJugadasPorUsuarioId, obtenerUsuarioId, importarJugadasCSV, confirmarImportacionJugadas } from '../../services/api.service.js';
 
 class GameMoves extends HTMLElement {
     constructor() {
@@ -23,8 +24,8 @@ class GameMoves extends HTMLElement {
     connectedCallback() {
         this.render();
         this.attachEventListeners();
-        this.loadDemoData();
-        this.subscribeToObservable();
+        this.loadFromBackend();
+        // this.subscribeToObservable(); // Observable solo se usa si otro componente lo actualiza
     }
 
     disconnectedCallback() {
@@ -164,6 +165,7 @@ class GameMoves extends HTMLElement {
 
     //datos demo - se reemplazaran con datos del observable/backend
     loadDemoData() {
+        /* DEMO DATA - COMENTADO EN FAVOR DE DATOS DEL BACKEND
         const demoMoves = [
             { player: 'Kasparov', fen: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1', uci: 'e2e4' },
             { player: 'Fischer', fen: 'rnbqkbnr/pppp1ppp/8/8/4Pp2/8/PPPP1PPP/RNBQKBNR w KQkq e3 0 2', uci: 'e2e4' },
@@ -182,15 +184,50 @@ class GameMoves extends HTMLElement {
         this.moves = demoMoves;
         movesObservable.setMoves(demoMoves);
         this.applyFilters();
+        */
     }
 
-    //suscribirse al observable
-    subscribeToObservable() {
-        this.unsubscribe = movesObservable.subscribe((moves) => {
-            this.moves = moves;
-            this.currentPage = 1;
+    // Cargar datos del backend
+    async loadFromBackend() {
+        try {
+            const usuarioId = obtenerUsuarioId();
+            
+            if (!usuarioId) {
+                alert('No hay usuario logeado. Por favor, inicia sesión.');
+                return;
+            }
+
+            // Llamar al backend para obtener jugadas del usuario
+            const response = await obtenerJugadasPorUsuarioId(usuarioId, {
+                page: 0,
+                size: 100, // Cargar más jugadas por defecto
+                sort: ['createdAt,desc'] // Más recientes primero
+            });
+
+            // Mapear datos del backend al formato que usa GameMoves
+            if (response && response.content) {
+                this.moves = response.content.map(jugada => ({
+                    id: jugada.id,
+                    player: jugada.usuarioNombre,      // Backend: usuarioNombre → Frontend: player
+                    fen: jugada.fen,                   // Directo
+                    uci: jugada.moveUci,               // Backend: moveUci → Frontend: uci
+                    moveSan: jugada.moveSan,           // Guardado pero no mostrado en tabla
+                    createdAt: jugada.createdAt        // Guardado pero no mostrado en tabla
+                }));
+
+                this.currentPage = 1;
+                this.applyFilters();
+            } else {
+                console.warn('Respuesta vacía del backend');
+                this.moves = [];
+                this.applyFilters();
+            }
+        } catch (error) {
+            console.error('Error al cargar jugadas del backend:', error);
+            alert(`Error al cargar jugadas: ${error.message}`);
+            this.moves = [];
             this.applyFilters();
-        });
+        }
     }
 
     //aplicar filtros y actualizar tabla
@@ -364,6 +401,9 @@ class GameMoves extends HTMLElement {
         const file = event.target.files[0];
         if (!file) return;
 
+        // Guardar el archivo para luego enviarlo al backend
+        this.csvFile = file;
+
         const reader = new FileReader();
         reader.onload = (e) => {
             try {
@@ -439,12 +479,37 @@ class GameMoves extends HTMLElement {
     }
 
     //confirmar importacion de csv
-    confirmCSVImport() {
-        //TODO: POST /api/moves/import con this.csvPreviewData
-        movesObservable.addMoves(this.csvPreviewData);
-        alert(`${this.csvPreviewData.length} jugada(s) importada(s)`);
-        this.closeCSVModal();
-        this.shadowRoot.querySelector('#csvFileInput').value = '';
+    async confirmCSVImport() {
+        try {
+            const usuarioId = obtenerUsuarioId();
+            if (!usuarioId) {
+                alert('Error: Usuario no autenticado');
+                return;
+            }
+
+            // 1. Enviar archivo al backend para importación
+            const importResponse = await importarJugadasCSV(this.csvFile, usuarioId);
+            console.log('Respuesta de importación:', importResponse);
+
+            // 2. Confirmar la importación con los datos parseados
+            const confirmResponse = await confirmarImportacionJugadas(usuarioId, this.csvPreviewData);
+            console.log('Respuesta de confirmación:', confirmResponse);
+
+            // 3. Mostrar mensaje de éxito
+            alert(`${this.csvPreviewData.length} jugada(s) importada(s) correctamente`);
+
+            // 4. Recargar la lista de jugadas desde la BD
+            await this.loadFromBackend();
+
+            // 5. Cerrar modal y limpiar
+            this.closeCSVModal();
+            this.shadowRoot.querySelector('#csvFileInput').value = '';
+            this.csvFile = null;
+            this.csvPreviewData = [];
+        } catch (error) {
+            console.error('Error al confirmar importación CSV:', error);
+            alert(`Error al importar CSV: ${error.message}`);
+        }
     }
 
     //exportar a csv

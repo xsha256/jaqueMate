@@ -2,7 +2,7 @@ import { Chess } from 'chess.js';
 import './app-ajedrez.css';
 import '../tablero-ajedrez/tablero-ajedrez.js';
 import '../panel-control/panel-control.js';
-import { crearJugada } from '../../services/api.service.js';
+import { crearJugada, obtenerUsuarioId } from '../../services/api.service.js';
 
 class AppAjedrez extends HTMLElement {
   constructor() {
@@ -77,9 +77,8 @@ class AppAjedrez extends HTMLElement {
       this.actualizarHistorial();
 
       // Guardar jugada en el backend
-      // TODO: Reemplazar con el ID real del usuario autenticado
       const jugadaData = {
-        usuarioId: 1, // ID temporal - debe venir de la sesión del usuario
+        usuarioId: obtenerUsuarioId(), // ID del usuario logeado
         fen: this.chess.fen(),
         moveUciFrom: desde,
         moveUciTo: hasta,
