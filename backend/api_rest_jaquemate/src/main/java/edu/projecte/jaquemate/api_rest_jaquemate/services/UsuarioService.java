@@ -7,6 +7,7 @@ import org.springframework.lang.NonNull;
 import edu.projecte.jaquemate.api_rest_jaquemate.model.dto.LoginUsuario;
 import edu.projecte.jaquemate.api_rest_jaquemate.model.dto.UsuarioCreate;
 import edu.projecte.jaquemate.api_rest_jaquemate.model.dto.UsuarioInfo;
+import edu.projecte.jaquemate.api_rest_jaquemate.model.dto.UsuarioUpdate;
 
 public interface UsuarioService {
 
@@ -23,4 +24,6 @@ public interface UsuarioService {
     boolean comprobarLogin(@NonNull LoginUsuario loginUsuario);
 
     UsuarioInfo crearUsuario(@NonNull UsuarioCreate usuarioCreate);
+
+    Optional<UsuarioInfo> actualizarPerfil(@NonNull Long id, @NonNull UsuarioUpdate usuarioUpdate);
 }

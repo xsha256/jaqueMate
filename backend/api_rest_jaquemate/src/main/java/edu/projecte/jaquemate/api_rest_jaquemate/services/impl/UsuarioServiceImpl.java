@@ -9,6 +9,7 @@ import edu.projecte.jaquemate.api_rest_jaquemate.model.db.Usuario;
 import edu.projecte.jaquemate.api_rest_jaquemate.model.dto.LoginUsuario;
 import edu.projecte.jaquemate.api_rest_jaquemate.model.dto.UsuarioCreate;
 import edu.projecte.jaquemate.api_rest_jaquemate.model.dto.UsuarioInfo;
+import edu.projecte.jaquemate.api_rest_jaquemate.model.dto.UsuarioUpdate;
 import edu.projecte.jaquemate.api_rest_jaquemate.repository.UsuarioRepository;
 import edu.projecte.jaquemate.api_rest_jaquemate.services.UsuarioService;
 import edu.projecte.jaquemate.api_rest_jaquemate.services.mapper.UsuarioMapper;
@@ -64,7 +65,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         Optional<Usuario> usuarioDbOp = usuarioRepository.findByUsuario(loginUsuario.getUsuario());
         if (usuarioDbOp.isPresent()) {
             Usuario usuarioDb = usuarioDbOp.get();
-            
+
             if (loginUsuario.getPassword().equals(usuarioDb.getPassword())) {
                 return true;
             }
@@ -77,5 +78,26 @@ public class UsuarioServiceImpl implements UsuarioService {
         Usuario usuario = UsuarioMapper.INSTANCE.usuarioCreateToUsuario(usuarioCreate);
         Usuario usuarioGuardado = usuarioRepository.save(usuario);
         return UsuarioMapper.INSTANCE.usuarioToUserInfo(usuarioGuardado);
+    }
+
+    @Override
+    public Optional<UsuarioInfo> actualizarPerfil(@NonNull Long id, @NonNull UsuarioUpdate usuarioUpdate) {
+        Optional<Usuario> usuarioDbOp = usuarioRepository.findById(id);
+        if (usuarioDbOp.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Usuario usuarioDb = usuarioDbOp.get();
+
+        // Actualizar solo los campos que no son null
+        if (usuarioUpdate.getUsuario() != null && !usuarioUpdate.getUsuario().isBlank()) {
+            usuarioDb.setUsuario(usuarioUpdate.getUsuario());
+        }
+        if (usuarioUpdate.getPassword() != null && !usuarioUpdate.getPassword().isBlank()) {
+            usuarioDb.setPassword(usuarioUpdate.getPassword());
+        }
+
+        Usuario usuarioActualizado = usuarioRepository.save(usuarioDb);
+        return Optional.of(UsuarioMapper.INSTANCE.usuarioToUserInfo(usuarioActualizado));
     }
 }

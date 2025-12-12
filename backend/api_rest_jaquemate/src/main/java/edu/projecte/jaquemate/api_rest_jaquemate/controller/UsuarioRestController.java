@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import edu.projecte.jaquemate.api_rest_jaquemate.model.dto.LoginUsuario;
 import edu.projecte.jaquemate.api_rest_jaquemate.model.dto.UsuarioCreate;
 import edu.projecte.jaquemate.api_rest_jaquemate.model.dto.UsuarioInfo;
+import edu.projecte.jaquemate.api_rest_jaquemate.model.dto.UsuarioUpdate;
 import edu.projecte.jaquemate.api_rest_jaquemate.services.UsuarioService;
 import jakarta.validation.Valid;
 
@@ -95,5 +97,28 @@ public class UsuarioRestController {
         Map<String, Boolean> response = new HashMap<>();
         response.put("existe", usuarioService.existsByEmail(email));
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/perfil/{id}")
+    public ResponseEntity<?> actualizarPerfil(@PathVariable Long id, @Valid @RequestBody UsuarioUpdate usuarioUpdate) {
+        // Verificar si el nuevo nombre de usuario ya existe (y no es el mismo usuario)
+        if (usuarioUpdate.getUsuario() != null && !usuarioUpdate.getUsuario().isBlank()) {
+            Optional<UsuarioInfo> usuarioExistente = usuarioService.getByUsuario(usuarioUpdate.getUsuario());
+            if (usuarioExistente.isPresent() && !usuarioExistente.get().getId().equals(id)) {
+                Map<String, String> error = new HashMap<>();
+                error.put("usuario", "El nombre de usuario ya está en uso");
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+            }
+        }
+
+        Optional<UsuarioInfo> usuarioActualizado = usuarioService.actualizarPerfil(id, usuarioUpdate);
+        if (usuarioActualizado.isPresent()) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Perfil actualizado correctamente");
+            response.put("usuario", usuarioActualizado.get());
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
+        }
     }
 }
