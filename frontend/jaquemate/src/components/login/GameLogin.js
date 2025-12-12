@@ -63,49 +63,66 @@ class GameLogin extends HTMLElement {
 
     async handleLogin(event) {
         event.preventDefault();
-        
+
         const usuario = this.shadowRoot.querySelector('#usuario').value;
         const password = this.shadowRoot.querySelector('#password').value;
 
         // Validar campos
         if (!usuario || !password) {
-            alert('Todos los campos son obligatorios');
+            this.showNotification('Error', 'Todos los campos son obligatorios', 'error');
             return;
         }
 
         try {
             const response = await loginUsuario({ usuario, password });
-            
-            // Verificar si el login fue exitoso
-            if (response.message === 'Login exitoso' && response.usuario && response.usuario.id) {
+
+            // Verificar login
+            const loginExitoso = response && (
+                (response.usuario && response.usuario.id) || // Formato: {usuario: {id: ...}}
+                response.id || // Formato directo: {id: ...}
+                (response.message && response.message.toLowerCase().includes('exitoso')) // Por mensaje
+            );
+
+            if (loginExitoso) {
                 // Guardar ID del usuario en localStorage
-                guardarUsuarioId(response.usuario.id);
+                const usuarioId = response.usuario?.id || response.id;
+                if (usuarioId) {
+                    guardarUsuarioId(usuarioId);
+                }
                 
-                // Disparar evento de cambio de estado de autenticación
                 window.dispatchEvent(new Event('authStateChanged'));
-                
-                alert('¡Bienvenido!');
-                
-                // Navegar a home o game
-                const navigationEvent = new CustomEvent('navigate', {
-                    detail: { route: '#home' },
-                    bubbles: true,
-                    composed: true
-                });
-                this.dispatchEvent(navigationEvent);
+
+                // Mostrar notificación de éxito
+                this.showNotification('¡Bienvenido!', 'Has iniciado sesión correctamente', 'success');
+
+                // Navegar a home después de un breve delay
+                setTimeout(() => {
+                    const navigationEvent = new CustomEvent('navigate', {
+                        detail: { route: '#home' },
+                        bubbles: true,
+                        composed: true
+                    });
+                    this.dispatchEvent(navigationEvent);
+                }, 1500);
             } else {
-                alert('Error en el login. Intenta de nuevo.');
+                this.showNotification('Error', 'No se pudo iniciar sesión. Verifica tus credenciales.', 'error');
             }
         } catch (error) {
             console.error('Error al iniciar sesión:', error);
-            alert(`Error: ${error.message}`);
+
+            // Mostrar mensaje de error específico
+            if (error.message.includes('401') || error.message.includes('inválidas') || error.message.includes('Credenciales')) {
+                this.showNotification('Credenciales incorrectas', 'Usuario o contraseña incorrectos', 'error');
+            } else {
+                this.showNotification('Error', error.message || 'Ocurrió un error al iniciar sesión', 'error');
+            }
         }
     }
 
     handleNavigation(event) {
         event.preventDefault();
         const href = event.target.getAttribute('href');
-        
+
         // Disparar evento personalizado para que el router maneje la navegación
         const navigationEvent = new CustomEvent('navigate', {
             detail: { route: href },
@@ -113,6 +130,40 @@ class GameLogin extends HTMLElement {
             composed: true
         });
         this.dispatchEvent(navigationEvent);
+    }
+
+    showNotification(title, message, type = 'success') {
+        // Eliminar notificación existente si hay alguna
+        const existingNotification = this.shadowRoot.querySelector('.notification');
+        if (existingNotification) {
+            existingNotification.remove();
+        }
+
+        // Crear contenedor de notificación
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+
+        // Icono según el tipo
+        const icon = type === 'success' ? '✓' : '✕';
+
+        notification.innerHTML = `
+            <div class="notification-icon">${icon}</div>
+            <div class="notification-content">
+                <div class="notification-title">${title}</div>
+                <div class="notification-message">${message}</div>
+            </div>
+        `;
+
+        // Agregar al shadow DOM
+        this.shadowRoot.appendChild(notification);
+
+        // Auto-remover después de 4 segundos
+        setTimeout(() => {
+            notification.classList.add('hide');
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 4000);
     }
 }
 

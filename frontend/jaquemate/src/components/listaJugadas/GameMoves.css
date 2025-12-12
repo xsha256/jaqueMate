@@ -76,7 +76,6 @@
     background-color: var(--color-bg-secondary);
     border: 1px solid var(--color-border);
     margin-bottom: 1.5rem;
-    flex: 1;
 }
 
 .moves-table thead {
@@ -86,7 +85,7 @@
 
 .moves-table th {
     padding: 0.8rem;
-    text-align: left;
+    text-align: center;
     color: var(--color-text-red);
     font-weight: 600;
     cursor: pointer;
@@ -120,6 +119,7 @@
 .moves-table td {
     padding: 0.8rem;
     color: var(--color-text-primary);
+    text-align: center;
 }
 
 .moves-table td.fen-cell {
@@ -139,6 +139,7 @@
 .moves-table td.actions-cell {
     display: flex;
     gap: 0.4rem;
+    justify-content: center;
 }
 
 .action-btn {
@@ -322,7 +323,6 @@
 .modal-preview-table th,
 .modal-preview-table td {
     padding: 0.6rem;
-    text-align: left;
     border-bottom: 1px solid var(--color-border);
 }
 
@@ -330,9 +330,11 @@
     background-color: var(--color-bg-dark);
     color: var(--color-text-red);
     font-weight: 600;
+    text-align: center;
 }
 
 .modal-preview-table td {
+    text-align: left;
     color: var(--color-text-primary);
     font-size: 0.85rem;
 }

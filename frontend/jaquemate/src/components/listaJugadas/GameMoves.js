@@ -55,9 +55,9 @@ class GameMoves extends HTMLElement {
                 <table class="moves-table">
                     <thead>
                         <tr>
-                            <th class="sortable" data-sort="player">Jugador ⇅</th>
-                            <th class="sortable" data-sort="fen">FEN ⇅</th>
-                            <th class="sortable" data-sort="uci">UCI ⇅</th>
+                            <th class="sortable" data-sort="player">Jugador</th>
+                            <th class="sortable" data-sort="fen">FEN</th>
+                            <th class="sortable" data-sort="uci">UCI</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>

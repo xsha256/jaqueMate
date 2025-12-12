@@ -141,24 +141,28 @@ class GameProfile extends HTMLElement {
     async loadUserData() {
         try {
             const usuarioId = obtenerUsuarioId();
-            
+
             if (!usuarioId) {
-                alert('No hay usuario autenticado');
+                this.showNotification('Error', 'No hay usuario autenticado', 'error');
                 return;
             }
 
             const response = await obtenerPerfilPorId(usuarioId);
-            
-            if (response && response.usuario) {
-                const usuario = response.usuario;
-                this.shadowRoot.querySelector('#usuario').value = usuario.usuario || '';
-                this.shadowRoot.querySelector('#email').value = usuario.email || '';
+
+            console.log('Datos del perfil cargados:', response);
+
+            // El backend devuelve los datos directamente: {id, usuario, email, creado}
+            if (response && (response.id || response.email)) {
+                // Cargar datos en los campos (excepto contraseña)
+                this.shadowRoot.querySelector('#usuario').value = response.usuario || '';
+                this.shadowRoot.querySelector('#email').value = response.email || '';
+                // No cargamos la contraseña por seguridad
             } else {
-                alert('Error al cargar datos del perfil');
+                this.showNotification('Error', 'No se pudieron cargar los datos del perfil', 'error');
             }
         } catch (error) {
             console.error('Error al cargar perfil:', error);
-            alert(`Error: ${error.message}`);
+            this.showNotification('Error', error.message || 'Error al cargar el perfil', 'error');
         }
     }
 
@@ -172,17 +176,17 @@ class GameProfile extends HTMLElement {
 
         // Validaciones
         if (!usuario.trim()) {
-            alert('El usuario no puede estar vacío');
+            this.showNotification('Error', 'El usuario no puede estar vacío', 'error');
             return;
         }
 
         if ((passwordNueva || passwordConfirm) && passwordNueva !== passwordConfirm) {
-            alert('Las nuevas contraseñas no coinciden');
+            this.showNotification('Error', 'Las nuevas contraseñas no coinciden', 'error');
             return;
         }
 
         if (passwordNueva && passwordNueva.length < 6) {
-            alert('La contraseña debe tener al menos 6 caracteres');
+            this.showNotification('Error', 'La contraseña debe tener al menos 6 caracteres', 'error');
             return;
         }
 
@@ -192,9 +196,9 @@ class GameProfile extends HTMLElement {
     async performProfileUpdate(usuario, passwordNueva) {
         try {
             const usuarioId = obtenerUsuarioId();
-            
+
             if (!usuarioId) {
-                alert('No hay usuario autenticado');
+                this.showNotification('Error', 'No hay usuario autenticado', 'error');
                 return;
             }
 
@@ -205,22 +209,64 @@ class GameProfile extends HTMLElement {
             }
 
             const response = await actualizarPerfil(usuarioId, perfilData);
-            
-            if (response && response.message) {
-                alert('Perfil actualizado correctamente');
-                
+
+            console.log('Respuesta actualización:', response);
+
+            if (response && (response.message || response.usuario)) {
+                this.showNotification('¡Perfil actualizado!', 'Tus datos se han guardado correctamente', 'success');
+
                 // Limpiar campos de contraseña
                 this.shadowRoot.querySelector('#passwordActual').value = '';
                 this.shadowRoot.querySelector('#passwordNueva').value = '';
                 this.shadowRoot.querySelector('#passwordConfirm').value = '';
                 this.validatePasswordMatch();
             } else {
-                alert('Error al actualizar perfil');
+                this.showNotification('Error', 'No se pudo actualizar el perfil', 'error');
             }
         } catch (error) {
             console.error('Error al actualizar perfil:', error);
-            alert(`Error: ${error.message}`);
+
+            // Mostrar mensaje específico para nombre de usuario duplicado
+            if (error.message.includes('409') || error.message.includes('uso') || error.message.includes('duplicado')) {
+                this.showNotification('Usuario en uso', 'El nombre de usuario ya está siendo utilizado', 'error');
+            } else {
+                this.showNotification('Error', error.message || 'Error al actualizar el perfil', 'error');
+            }
         }
+    }
+
+    showNotification(title, message, type = 'success') {
+        // Eliminar notificación existente si hay alguna
+        const existingNotification = this.shadowRoot.querySelector('.notification');
+        if (existingNotification) {
+            existingNotification.remove();
+        }
+
+        // Crear contenedor de notificación
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+
+        // Icono según el tipo
+        const icon = type === 'success' ? '✓' : '✕';
+
+        notification.innerHTML = `
+            <div class="notification-icon">${icon}</div>
+            <div class="notification-content">
+                <div class="notification-title">${title}</div>
+                <div class="notification-message">${message}</div>
+            </div>
+        `;
+
+        // Agregar al shadow DOM
+        this.shadowRoot.appendChild(notification);
+
+        // Auto-remover después de 4 segundos
+        setTimeout(() => {
+            notification.classList.add('hide');
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 4000);
     }
 }
 

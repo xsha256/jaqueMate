@@ -1,6 +1,7 @@
 /*GameHome - Webcomponent*/
 
 import style from './home.css?inline';
+import { estaAutenticado } from '../../services/api.service.js';
 
 class GameHome extends HTMLElement {
     constructor() {
@@ -55,8 +56,20 @@ class GameHome extends HTMLElement {
     handleNavigation(event) {
         event.preventDefault();
         const href = event.target.getAttribute('href');
-        
-        // Disparar evento personalizado para que el router maneje la navegación
+
+        // Verificar si el usuario está autenticado
+        if (!estaAutenticado()) {
+            // Si no está autenticado, redirigir al login
+
+            const navigationEvent = new CustomEvent('navigate', {
+                detail: { route: '#login' },
+                bubbles: true,
+                composed: true
+            });
+            this.dispatchEvent(navigationEvent);
+            return;
+        }
+
         const navigationEvent = new CustomEvent('navigate', {
             detail: { route: href },
             bubbles: true,
