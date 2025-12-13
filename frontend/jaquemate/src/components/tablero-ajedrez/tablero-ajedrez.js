@@ -1,11 +1,11 @@
-import { Chess } from 'chess.js';
-import { BehaviorSubject } from 'rxjs';
-import './tablero-ajedrez.css';
+import { Chess } from "chess.js";
+import { BehaviorSubject } from "rxjs";
+import "./tablero-ajedrez.css";
 
 class TableroAjedrez extends HTMLElement {
   constructor() {
     super();
-    this.posicion$ = new BehaviorSubject('start');
+    this.posicion$ = new BehaviorSubject("start");
     this.board = null;
     this.contenedorTablero = null;
     this.suscripcionPosicion = null;
@@ -13,7 +13,7 @@ class TableroAjedrez extends HTMLElement {
   }
 
   connectedCallback() {
-    if (typeof window.Chessboard === 'undefined') {
+    if (typeof window.Chessboard === "undefined") {
       setTimeout(() => this.connectedCallback(), 100);
       return;
     }
@@ -27,7 +27,7 @@ class TableroAjedrez extends HTMLElement {
       this.suscripcionPosicion.unsubscribe();
     }
     if (this.handleResize) {
-      window.removeEventListener('resize', this.handleResize);
+      window.removeEventListener("resize", this.handleResize);
     }
     if (this.board) {
       this.board.destroy();
@@ -35,11 +35,11 @@ class TableroAjedrez extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['posicion-inicial'];
+    return ["posicion-inicial"];
   }
 
   attributeChangedCallback(nombre, valorAntiguo, valorNuevo) {
-    if (nombre === 'posicion-inicial' && valorNuevo && this.board) {
+    if (nombre === "posicion-inicial" && valorNuevo && this.board) {
       this.posicion$.next(valorNuevo);
     }
   }
@@ -51,15 +51,19 @@ class TableroAjedrez extends HTMLElement {
       </div>
     `;
 
-    this.contenedorTablero = this.querySelector('#tablero-chess');
+    this.contenedorTablero = this.querySelector("#tablero-chess");
 
     const config = {
       draggable: true,
-      position: this.getAttribute('posicion-inicial') || 'start',
-      pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png',
+      position: this.getAttribute("posicion-inicial") || "start",
+      pieceTheme:
+        "https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png",
       showNotation: true,
-      orientation: 'white',
-      onDrop: this.alSoltar.bind(this)
+      orientation: "white",
+      snapbackSpeed: 500,
+      snapSpeed: 100,
+      onDragStart: this.alEmpezarArrastre.bind(this),
+      onDrop: this.alSoltar.bind(this),
     };
 
     this.board = globalThis.Chessboard(this.contenedorTablero, config);
@@ -84,7 +88,7 @@ class TableroAjedrez extends HTMLElement {
       }, 100);
     };
 
-    window.addEventListener('resize', this.handleResize);
+    window.addEventListener("resize", this.handleResize);
   }
 
   actualizarPosicion(posicion) {
@@ -93,28 +97,114 @@ class TableroAjedrez extends HTMLElement {
     try {
       this.board.position(posicion);
     } catch (e) {
-      console.error('Error al actualizar posición:', e);
+      console.error("Error al actualizar posición:", e);
     }
   }
 
+  alEmpezarArrastre(source, piece, position, orientation) {
+    const chess = new Chess(this.posicion$.getValue());
+
+    // No permitir arrastrar si el juego ha terminado
+    if (chess.isGameOver()) {
+      return false;
+    }
+
+    // Solo permitir arrastrar piezas del turno actual
+    const turno = chess.turn();
+    const esPiezaDelTurno =
+      (turno === "w" && piece.search(/^w/) !== -1) ||
+      (turno === "b" && piece.search(/^b/) !== -1);
+
+    return esPiezaDelTurno;
+  }
+
   alSoltar(casillaOrigen, casillaDestino, pieza) {
-    const eventoMovimiento = new CustomEvent('intento-movimiento', {
+    console.log("alSoltar llamado:", casillaOrigen, "->", casillaDestino);
+
+    // Si la casilla de destino es la misma que la de origen, no hacer nada
+    if (casillaOrigen === casillaDestino) {
+      console.log("Misma casilla, retornando vacío");
+      return; // Esto permite soltar la pieza en su lugar original
+    }
+
+    const chess = new Chess(this.posicion$.getValue());
+
+    // Primero verificar si es un movimiento de promoción
+    const esPromocion = this.esMovimientoDePromocion(
+      chess,
+      casillaOrigen,
+      casillaDestino
+    );
+
+    // Validar el movimiento (sin modificar el estado real)
+    let movimientoTest;
+    try {
+      movimientoTest = chess.move({
+        from: casillaOrigen,
+        to: casillaDestino,
+        promotion: esPromocion ? "q" : undefined,
+      });
+    } catch (e) {
+      // Movimiento ilegal - chess.js lanza excepción
+      console.log("Movimiento ILEGAL (excepción), retornando snapback");
+      return "snapback";
+    }
+
+    if (!movimientoTest) {
+      // Movimiento ilegal
+      console.log("Movimiento ILEGAL, retornando snapback");
+      return "snapback";
+    }
+
+    console.log("Movimiento válido:", movimientoTest);
+
+    if (esPromocion) {
+      console.log("Es promoción, abriendo diálogo");
+      const promotionDialog = document.querySelector("promotion-dialog");
+      if (promotionDialog) {
+        promotionDialog.open(
+          {
+            from: casillaOrigen,
+            to: casillaDestino,
+          },
+          pieza[0]
+        );
+      }
+      return "snapback"; // Snapback hasta que se seleccione la pieza
+    }
+
+    // Movimiento normal válido - disparar evento
+    // NO devolver snapback para que la pieza se quede en su lugar
+    console.log("Disparando evento intento-movimiento");
+    const eventoMovimiento = new CustomEvent("intento-movimiento", {
       detail: {
-        desde: casillaOrigen,
-        hasta: casillaDestino,
-        pieza: pieza,
-        posicionAnterior: this.obtenerPosicionActual()
+        from: casillaOrigen,
+        to: casillaDestino,
+        pieza,
       },
       bubbles: true,
-      composed: true
+      composed: true,
     });
-
     this.dispatchEvent(eventoMovimiento);
-    return 'snapback';
+    // No devolver nada - la pieza se queda en la nueva posición
+  }
+
+  esMovimientoDePromocion(chess, from, to) {
+    const piece = chess.get(from);
+    if (!piece || piece.type !== "p") return false;
+
+    const rank = to[1];
+    const isWhitePawn = piece.color === "w";
+    const isBlackPawn = piece.color === "b";
+
+    if (isWhitePawn && rank === "8") return true;
+    if (isBlackPawn && rank === "1") return true;
+
+    return false;
   }
 
   obtenerPosicionActual() {
-    if (!this.board) return 'start';
+    if (!this.board) return "start";
 
     const posicion = this.board.position();
 
@@ -124,15 +214,15 @@ class TableroAjedrez extends HTMLElement {
 
       for (const casilla in posicion) {
         const pieza = posicion[casilla];
-        const color = pieza[0] === 'w' ? 'w' : 'b';
+        const color = pieza[0] === "w" ? "w" : "b";
         const tipo = pieza[1].toLowerCase();
         chess.put({ type: tipo, color: color }, casilla);
       }
 
       return chess.fen();
     } catch (e) {
-      console.error('Error al obtener FEN:', e);
-      return 'start';
+      console.error("Error al obtener FEN:", e);
+      return "start";
     }
   }
 

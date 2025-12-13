@@ -18,6 +18,7 @@ import { PanelControl } from "./components/panel-control/panel-control.js";
 import { GameProfile } from "./components/perfil/GameProfile.js";
 import { GameRegister } from "./components/registro/GameRegister.js";
 import { TableroAjedrez } from "./components/tablero-ajedrez/tablero-ajedrez.js";
+import "./components/promotion-dialog/promotion-dialog.js";
 
 ///////// Registrar WebComponents ////////////
 customElements.define("game-header", GameHeader);
