@@ -1,9 +1,3 @@
-/**
- * GameFooter - WebComponent para el Footer de JaqueMate
- * 
- * Componente que renderiza el footer con información de participantes
- */
-
 import style from './GameFooter.css?inline';
 
 class GameFooter extends HTMLElement {

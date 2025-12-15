@@ -1,5 +1,3 @@
-/* GameProfile - webcomponent */
-
 import style from './GameProfile.css?inline';
 import { obtenerUsuarioId, actualizarPerfil, obtenerPerfilPorId } from '../../services/api.service.js';
 
@@ -149,9 +147,9 @@ class GameProfile extends HTMLElement {
 
             const response = await obtenerPerfilPorId(usuarioId);
 
-            // El backend devuelve los datos directamente: {id, usuario, email, creado}
+            // El backend devuelve los datos
             if (response && (response.id || response.email)) {
-                // Cargar datos en los campos (excepto contraseña)
+                // Cargar datos en los campos
                 this.shadowRoot.querySelector('#usuario').value = response.usuario || '';
                 this.shadowRoot.querySelector('#email').value = response.email || '';
                 // No cargamos la contraseña por seguridad
@@ -208,8 +206,6 @@ class GameProfile extends HTMLElement {
 
             const response = await actualizarPerfil(usuarioId, perfilData);
 
-            console.log('Respuesta actualización:', response);
-
             if (response && (response.message || response.usuario)) {
                 this.showNotification('¡Perfil actualizado!', 'Tus datos se han guardado correctamente', 'success');
 
@@ -258,7 +254,7 @@ class GameProfile extends HTMLElement {
         // Agregar al shadow DOM
         this.shadowRoot.appendChild(notification);
 
-        // Auto-remover después de 4 segundos
+        // Eliminar después de 4 segundos
         setTimeout(() => {
             notification.classList.add('hide');
             setTimeout(() => {

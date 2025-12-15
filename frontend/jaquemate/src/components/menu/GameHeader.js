@@ -1,4 +1,3 @@
-/* GameHeader - WebComponent */
 import style from './GameHeader.css?inline';
 import { obtenerUsuarioId, limpiarUsuarioId, estaAutenticado } from '../../services/api.service.js';
 
@@ -12,12 +11,12 @@ class GameHeader extends HTMLElement {
         this.render();
         this.refreshHeader();
         
-        // Escuchar cambios en el almacenamiento (otra pestaña)
+        // Escuchar cambios en el storage
         window.addEventListener('storage', () => {
             this.refreshHeader();
         });
 
-        // Escuchar eventos personalizados (misma pestaña)
+        // Escuchar eventos en la misma pestaña
         window.addEventListener('authStateChanged', () => {
             this.refreshHeader();
         });
@@ -27,7 +26,7 @@ class GameHeader extends HTMLElement {
         const estaAutenticadoUser = estaAutenticado();
         const template = document.createElement('template');
         
-        // Construir HTML dinámicamente según autenticación
+        // Construir HTML dinámicamente dependiendo de la autenticación
         let botonesIzquierda = `
             <a href="#home" class="nav-btn logo">JaqueMate</a>
         `;
@@ -66,7 +65,7 @@ class GameHeader extends HTMLElement {
             </header>
         `;
 
-        // Limpiar shadowRoot antes de agregar nuevo contenido (evita duplicados)
+        // Limpiar shadowRoot antes de poner nuevo contenido
         this.shadowRoot.innerHTML = '';
         this.shadowRoot.appendChild(template.content.cloneNode(true));
         this.attachEventListeners();

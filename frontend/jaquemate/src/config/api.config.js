@@ -5,9 +5,8 @@ export const DEFAULT_HEADERS = {
   'Content-Type': 'application/json',
 };
 
-/**
- * Endpoints disponibles en el backend
- */
+
+ //Endpoints disponibles en el backend
 export const ENDPOINTS = {
   USUARIOS: '/usuarios',
   JUGADAS: '/jugadas',

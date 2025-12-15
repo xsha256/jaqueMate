@@ -66,7 +66,7 @@ class AppAjedrez extends HTMLElement {
         this.panel.actualizarHistorial([], true);
       } catch (e) {
         console.error("Error al cargar FEN:", e);
-        // Si hay error, mantener posición inicial
+        // Si hay error mantener posición inicial
         this.chess.reset();
         this.tablero.posicion$.next(this.chess.fen());
         this.actualizarHistorial();

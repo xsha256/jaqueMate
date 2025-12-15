@@ -1,8 +1,5 @@
-/* GameMoves WebComponent. Es la lista de Jugadas pero NO la que junto a tablero, sino la del boton Lista Jugadas */
-
 import style from './GameMoves.css?inline';
-import { movesObservable } from '../../observables/movesObservable.js';
-import { obtenerTodasJugadas, obtenerUsuarioId, importarJugadasCSV, confirmarImportacionJugadas, eliminarJugada } from '../../services/api.service.js';
+import { obtenerTodasJugadas, obtenerUsuarioId,  confirmarImportacionJugadas, eliminarJugada } from '../../services/api.service.js';
 
 class GameMoves extends HTMLElement {
     constructor() {
@@ -28,7 +25,6 @@ class GameMoves extends HTMLElement {
         this.render();
         this.attachEventListeners();
         this.loadFromBackend();
-        // this.subscribeToObservable(); // Observable solo se usa si otro componente lo actualiza
     }
 
     disconnectedCallback() {
@@ -162,12 +158,11 @@ class GameMoves extends HTMLElement {
         this.shadowRoot.querySelector('#playerFilter').addEventListener('input', (e) => {
             const value = e.target.value.toLowerCase();
 
-            // Limpiar el timer anterior si existe
+            // Limpiar el timer anterior
             if (this.filterDebounceTimer) {
                 clearTimeout(this.filterDebounceTimer);
             }
 
-            // Crear nuevo timer con debounce de 300ms
             this.filterDebounceTimer = setTimeout(() => {
                 this.filterPlayer = value;
                 this.currentPage = 1;
@@ -405,7 +400,7 @@ class GameMoves extends HTMLElement {
         this.goToPage(totalPages);
     }
 
-    //ver jugada en tablero (emite evento)
+    //ver jugada en tablero
     handleViewInBoard(move) {
         // Guardar el FEN de la jugada a visualizar
         this.pendingMoveToView = move;
@@ -423,12 +418,11 @@ class GameMoves extends HTMLElement {
 
     confirmViewMove() {
         if (this.pendingMoveToView) {
-            // Navegar a #game con el FEN y PGN codificados como parámetros
+            // Navegar a #game con el FEN y PGN como parámetros
             const fenEncodificado = encodeURIComponent(this.pendingMoveToView.fen);
             const pgnEncodificado = this.pendingMoveToView.pgn ? encodeURIComponent(this.pendingMoveToView.pgn) : '';
             const route = `#game?fen=${fenEncodificado}&pgn=${pgnEncodificado}`;
 
-            // Disparar evento de navegación para que el router lo maneje
             const navigationEvent = new CustomEvent('navigate', {
                 detail: { route: route },
                 bubbles: true,
@@ -436,7 +430,7 @@ class GameMoves extends HTMLElement {
             });
             document.dispatchEvent(navigationEvent);
 
-            // También actualizar el hash para que la URL se actualice
+            // Actualizar el hash para que la URL se actualice
             window.location.hash = route;
         }
         this.closeViewMoveModal();
@@ -591,7 +585,7 @@ class GameMoves extends HTMLElement {
 
         this.updateCSVPreviewCount();
 
-        // Si no quedan jugadas, cerrar el modal
+        // Si no quedan jugadas cerrar el modal
         if (this.csvPreviewData.length === 0) {
             this.closeCSVModal();
             this.showNotification(
@@ -627,24 +621,22 @@ class GameMoves extends HTMLElement {
             }
 
             // Transformar los datos al formato esperado por el backend
-            // Backend espera: { fen: string, jugadas: string }
-            // Frontend tiene: { player: string, fen: string, uci: string }
             const jugadasParaBackend = this.csvPreviewData.map(jugada => ({
                 fen: jugada.fen,
-                jugadas: jugada.uci  // El backend llama "jugadas" al campo UCI
+                jugadas: jugada.uci 
             }));
 
-            // Confirmar la importación con los datos parseados
+            // Confirmar la importación con los datos
             const confirmResponse = await confirmarImportacionJugadas(usuarioId, jugadasParaBackend);
             
-            // Cerrar modal y limpiar ANTES de mostrar la notificación
+            // Cerrar modal y limpiar antes de mostrar la notificación
             this.closeCSVModal();
             this.shadowRoot.querySelector('#csvFileInput').value = '';
             this.csvFile = null;
             const cantidadImportadas = this.csvPreviewData.length;
             this.csvPreviewData = [];
 
-            // Mostrar mensaje de éxito
+            // Mostrar mensaje de completado
             this.showNotification(
                 'Importación Exitosa',
                 `${cantidadImportadas} jugada(s) importada(s) correctamente`,

@@ -383,7 +383,7 @@ export async function confirmarImportacionJugadas(usuarioId, jugadas) {
   }
 }
 
-// ============ ACTUALIZAR PERFIL ============
+// Actualizar perfil
 
 export async function actualizarPerfil(usuarioId, perfilData) {
   try {

@@ -27,11 +27,3 @@ document.addEventListener('DOMContentLoaded', () => {
     // Renderizar la ruta inicial (home)
     router('', contentContainer);
 });
-
-/**
- * Archivo principal de la aplicación JaqueMate
- * 
- * Este archivo es el punto de entrada de la aplicación.
- * Importa las librerías necesarias, registra los WebComponents,
- * e inicializa el router para gestionar la navegación.
- */

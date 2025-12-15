@@ -1,7 +1,3 @@
-/* GameLogin */
-
-//Es un WebComponent para el formulario de login
-
 import style from './GameLogin.css?inline';
 import { loginUsuario, guardarUsuarioId } from '../../services/api.service.js';
 
@@ -78,9 +74,8 @@ class GameLogin extends HTMLElement {
 
             // Verificar login
             const loginExitoso = response && (
-                (response.usuario && response.usuario.id) || // Formato: {usuario: {id: ...}}
-                response.id || // Formato directo: {id: ...}
-                (response.message && response.message.toLowerCase().includes('exitoso')) // Por mensaje
+                (response.usuario && response.usuario.id) || response.id || 
+                (response.message && response.message.toLowerCase().includes('exitoso')) // Por cada mensaje
             );
 
             if (loginExitoso) {
@@ -92,10 +87,10 @@ class GameLogin extends HTMLElement {
                 
                 window.dispatchEvent(new Event('authStateChanged'));
 
-                // Mostrar notificación de éxito
+                // Mostrar notificación de completado
                 this.showNotification('¡Bienvenido!', 'Has iniciado sesión correctamente', 'success');
 
-                // Navegar a home después de un breve delay
+                // Volver a home
                 setTimeout(() => {
                     const navigationEvent = new CustomEvent('navigate', {
                         detail: { route: '#home' },
@@ -110,7 +105,7 @@ class GameLogin extends HTMLElement {
         } catch (error) {
             console.error('Error al iniciar sesión:', error);
 
-            // Mostrar mensaje de error específico
+            // Mostrar mensaje de error
             if (error.message.includes('401') || error.message.includes('inválidas') || error.message.includes('Credenciales')) {
                 this.showNotification('Credenciales incorrectas', 'Usuario o contraseña incorrectos', 'error');
             } else {
@@ -123,7 +118,7 @@ class GameLogin extends HTMLElement {
         event.preventDefault();
         const href = event.target.getAttribute('href');
 
-        // Disparar evento personalizado para que el router maneje la navegación
+        // Evento personalizado para que el router maneje la navegación
         const navigationEvent = new CustomEvent('navigate', {
             detail: { route: href },
             bubbles: true,
@@ -157,7 +152,7 @@ class GameLogin extends HTMLElement {
         // Agregar al shadow DOM
         this.shadowRoot.appendChild(notification);
 
-        // Auto-remover después de 4 segundos
+        // Quitar después de 4 segundos
         setTimeout(() => {
             notification.classList.add('hide');
             setTimeout(() => {

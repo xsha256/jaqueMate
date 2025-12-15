@@ -1,6 +1,3 @@
-/*GameRegister*/
-//Es un webcomponent para el formulario de registro
-
 import style from './GameRegister.css?inline';
 import { registrarUsuario, guardarUsuarioId } from '../../services/api.service.js';
 
@@ -103,19 +100,16 @@ class GameRegister extends HTMLElement {
         try {
             const response = await registrarUsuario({ usuario, email, password });
 
-            // Verificar si el registro fue exitoso
-            // La respuesta puede tener diferentes estructuras, verificamos todas las posibilidades
+            // Verificar si el registro se ha completado
             const registroExitoso = response && (
-                (response.usuario && response.usuario.id) || // Formato: {usuario: {id: ...}}
-                response.id || // Formato directo: {id: ...}
-                (response.message && response.message.toLowerCase().includes('exitoso')) // Por mensaje
+                (response.usuario && response.usuario.id) || response.id || (response.message && response.message.toLowerCase().includes('exitoso')) // Por cada mensaje
             );
 
             if (registroExitoso) {
                 // Mostrar notificación de éxito
                 this.showNotification('¡Registro exitoso!', 'Ahora puedes iniciar sesión con tus credenciales', 'success');
 
-                // Redirigir a login después de un breve delay
+                // Redirigir a login
                 setTimeout(() => {
                     const navigationEvent = new CustomEvent('navigate', {
                         detail: { route: '#login' },
@@ -143,7 +137,7 @@ class GameRegister extends HTMLElement {
         event.preventDefault();
         const href = event.target.getAttribute('href');
 
-        // Disparar evento personalizado para que el router maneje la navegación
+        // Evento específico de navegación
         const navigationEvent = new CustomEvent('navigate', {
             detail: { route: href },
             bubbles: true,
@@ -177,7 +171,7 @@ class GameRegister extends HTMLElement {
         // Agregar al shadow DOM
         this.shadowRoot.appendChild(notification);
 
-        // Auto-remover después de 4 segundos
+        // Eliminar después de 4 segundos
         setTimeout(() => {
             notification.classList.add('hide');
             setTimeout(() => {

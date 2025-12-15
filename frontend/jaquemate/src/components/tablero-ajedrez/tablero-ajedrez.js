@@ -119,12 +119,10 @@ class TableroAjedrez extends HTMLElement {
   }
 
   alSoltar(casillaOrigen, casillaDestino, pieza) {
-    console.log("alSoltar llamado:", casillaOrigen, "->", casillaDestino);
 
-    // Si la casilla de destino es la misma que la de origen, no hacer nada
+    // Si la casilla es la misma no hacer nada
     if (casillaOrigen === casillaDestino) {
-      console.log("Misma casilla, retornando vacío");
-      return; // Esto permite soltar la pieza en su lugar original
+      return;
     }
 
     const chess = new Chess(this.posicion$.getValue());
@@ -136,7 +134,7 @@ class TableroAjedrez extends HTMLElement {
       casillaDestino
     );
 
-    // Validar el movimiento (sin modificar el estado real)
+    // Validar el movimiento
     let movimientoTest;
     try {
       movimientoTest = chess.move({
@@ -145,21 +143,16 @@ class TableroAjedrez extends HTMLElement {
         promotion: esPromocion ? "q" : undefined,
       });
     } catch (e) {
-      // Movimiento ilegal - chess.js lanza excepción
-      console.log("Movimiento ILEGAL (excepción), retornando snapback");
+      // Movimiento ilegal
       return "snapback";
     }
 
     if (!movimientoTest) {
       // Movimiento ilegal
-      console.log("Movimiento ILEGAL, retornando snapback");
       return "snapback";
     }
 
-    console.log("Movimiento válido:", movimientoTest);
-
     if (esPromocion) {
-      console.log("Es promoción, abriendo diálogo");
       const promotionDialog = document.querySelector("promotion-dialog");
       if (promotionDialog) {
         promotionDialog.open(
@@ -170,12 +163,11 @@ class TableroAjedrez extends HTMLElement {
           pieza[0]
         );
       }
-      return "snapback"; // Snapback hasta que se seleccione la pieza
+      return "snapback";
     }
 
     // Movimiento normal válido - disparar evento
     // NO devolver snapback para que la pieza se quede en su lugar
-    console.log("Disparando evento intento-movimiento");
     const eventoMovimiento = new CustomEvent("intento-movimiento", {
       detail: {
         from: casillaOrigen,

@@ -58,7 +58,7 @@ class PanelControl extends HTMLElement {
           if (primerMovimientoBlancas) {
             moveNumber = Math.floor(idx / 2) + 1;
           } else {
-            // Si empieza con negras, el primer movimiento es el movimiento X de negras
+            // Si empieza con negras el primer movimiento es el movimiento X de negras
             moveNumber = Math.floor((idx + 1) / 2) + 1;
           }
 

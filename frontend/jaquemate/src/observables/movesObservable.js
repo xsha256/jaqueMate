@@ -1,5 +1,3 @@
-/* movesObservable.js - observable reactivo para la lista de jugadas */
-
 class MovesObservable {
     constructor() {
         this.subscribers = [];
@@ -51,5 +49,5 @@ class MovesObservable {
     }
 }
 
-//instancia unica (singleton) del observable
+//instancia unica del observable
 export const movesObservable = new MovesObservable();

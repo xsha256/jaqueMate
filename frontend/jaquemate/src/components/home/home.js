@@ -1,5 +1,3 @@
-/*GameHome - Webcomponent*/
-
 import style from './home.css?inline';
 import { estaAutenticado } from '../../services/api.service.js';
 
