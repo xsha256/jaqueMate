@@ -54,7 +54,7 @@ La forma más sencilla de ejecutar el proyecto es usando Docker Compose, que orq
     Este comando construirá las imágenes de los contenedores (si no existen) y los iniciará.
 
 3.  **Acceder a la aplicación:**
-    - **Frontend:** Abre tu navegador y ve a `http://localhost:8080`
+    - **Frontend:** Abre tu navegador y ve a `http://localhost:5173`
     - **Backend API (Swagger UI):** Accede a la documentación de la API en `http://localhost:8090/swagger-ui/index.html`
 
 ---
