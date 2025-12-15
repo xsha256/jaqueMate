@@ -1,0 +1,212 @@
+/* GameProfile*/
+
+:host {
+    --color-bg-secondary: #2d2d2d;
+    --color-bg-dark: #1f1f1f;
+    --color-text-primary: #e0e0e0;
+    --color-text-secondary: #b0b0b0;
+    --color-text-disabled: #808080;
+    --color-text-red: #c41e3a;
+    --color-text-red-dark: #8b1628;
+    --color-text-red-light: #e63946;
+    --color-border: #404040;
+    --color-success: #4caf50;
+    --color-error: #f44336;
+}
+
+.profile-container {
+    background-color: var(--color-bg-secondary);
+    padding: 3rem;
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    width: 100%;
+    max-width: 500px;
+    margin: 3rem auto;
+}
+
+.profile-container h1 {
+    font-size: 2.5rem;
+    color: var(--color-text-red);
+    margin-bottom: 2rem;
+    text-align: center;
+    font-weight: bold;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 1rem;
+    color: var(--color-text-primary);
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1rem;
+    background-color: var(--color-bg-dark);
+    color: var(--color-text-primary);
+    border: 2px solid var(--color-border);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.form-group input:disabled {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-secondary);
+    cursor: not-allowed;
+}
+
+.form-group input::placeholder {
+    color: var(--color-text-disabled);
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--color-text-red);
+    background-color: var(--color-bg-secondary);
+}
+
+.password-group {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.password-group input {
+    flex: 1;
+}
+
+.toggle-password {
+    background: none;
+    border: none;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0.5rem;
+    margin-left: -3rem;
+    padding-right: 1rem;
+    transition: color 0.3s ease;
+}
+
+.toggle-password:hover {
+    color: var(--color-text-primary);
+}
+
+.info-text {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    margin-top: 0.3rem;
+}
+
+.info-text.match {
+    color: var(--color-success);
+}
+
+.info-text.error {
+    color: var(--color-error);
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 1rem;
+    background-color: var(--color-text-red);
+    color: var(--color-text-primary);
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1.5rem;
+}
+
+.submit-btn:hover {
+    background-color: var(--color-text-red-dark);
+    transform: translateY(-2px);
+}
+
+/* Notificación Toast */
+.notification {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    padding: 1.25rem 2rem;
+    border-radius: 8px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 300px;
+    max-width: 500px;
+    animation: slideIn 0.3s ease-out;
+    z-index: 1000;
+    border-left: 5px solid var(--notification-border-color);
+    background-color: var(--notification-bg-color);
+    color: var(--notification-text-color);
+}
+
+.notification.success {
+    --notification-border-color: #10b981;
+    --notification-bg-color: #064e3b;
+    --notification-text-color: #d1fae5;
+}
+
+.notification.error {
+    --notification-border-color: #ef4444;
+    --notification-bg-color: #7f1d1d;
+    --notification-text-color: #fecaca;
+}
+
+.notification-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+}
+
+.notification-message {
+    font-size: 0.95rem;
+    opacity: 0.9;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.notification.hide {
+    animation: slideOut 0.3s ease-in forwards;
+}

@@ -1,0 +1,163 @@
+panel-control {
+  display: flex;
+  position: relative;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+panel-control .moves-panel {
+  background-color: #2d2d2d;
+  width: 0;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid #404040;
+  transition: all 0.3s ease;
+  opacity: 0;
+  flex-shrink: 0;
+  max-height: min(600px, 80vh);
+  box-sizing: border-box;
+}
+
+panel-control .moves-panel.open {
+  width: 300px;
+  opacity: 1;
+  padding: 1.5rem;
+}
+
+@media (max-width: 1200px) {
+  panel-control .moves-panel.open {
+    width: 250px;
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 900px) {
+  panel-control .moves-panel.open {
+    width: 200px;
+    padding: 0.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  panel-control {
+    width: 100%;
+    justify-content: center;
+  }
+
+  panel-control .moves-panel.open {
+    width: min(95vw, 500px);
+    padding: 1rem;
+  }
+}
+
+panel-control .moves-panel h3 {
+  color: #c41e3a;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+panel-control .moves-list {
+  list-style: none;
+  max-height: min(400px, 60vh);
+  overflow-y: auto;
+  padding: 0;
+  margin: 0;
+}
+
+panel-control .moves-list li {
+  padding: 0.8rem;
+  margin-bottom: 0.5rem;
+  background-color: #3a3a3a;
+  border-radius: 5px;
+  font-family: 'Roboto Mono', 'Courier New', monospace;
+  color: #b0b0b0;
+  border: 1px solid #505050;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+panel-control .moves-list li:hover {
+  background-color: #c41e3a;
+  color: #e0e0e0;
+  cursor: pointer;
+  border-color: #c41e3a;
+}
+
+panel-control .color-indicator {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  border: 1px solid #505050;
+}
+
+panel-control .color-indicator.white {
+  background-color: #e0e0e0;
+}
+
+panel-control .color-indicator.black {
+  background-color: #2d2d2d;
+  border-color: #e0e0e0;
+}
+
+panel-control .moves-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+panel-control .moves-list::-webkit-scrollbar-track {
+  background: #1f1f1f;
+  border-radius: 4px;
+}
+
+panel-control .moves-list::-webkit-scrollbar-thumb {
+  background: #505050;
+  border-radius: 4px;
+}
+
+panel-control .moves-list::-webkit-scrollbar-thumb:hover {
+  background: #c41e3a;
+}
+
+panel-control .toggle-moves {
+  background-color: #2d2d2d;
+  border: 1px solid #404040;
+  padding: 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1.5rem;
+  transition: all 0.3s ease;
+  color: #e0e0e0;
+  flex-shrink: 0;
+}
+
+panel-control .toggle-moves:hover {
+  background-color: #c41e3a;
+  border-color: #c41e3a;
+  transform: scale(1.1);
+}
+
+panel-control .empty-message {
+  color: #b0b0b0;
+  font-style: italic;
+  text-align: center;
+  padding: 2rem;
+}
+
+panel-control .fen-initial {
+  background-color: #1f4d3a !important;
+  border-color: #27ae60 !important;
+  color: #d1fae5 !important;
+  font-style: italic;
+}
+
+panel-control .fen-initial:hover {
+  background-color: #27ae60 !important;
+  color: #0d0d0d !important;
+}
+
+panel-control .fen-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}

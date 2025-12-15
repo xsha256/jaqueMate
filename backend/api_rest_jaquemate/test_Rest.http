@@ -1,0 +1,254 @@
+
+### Registrar un nuevo usuario
+POST http://localhost:8090/api/v1/usuarios/registro HTTP/1.1
+Content-Type: application/json
+
+{
+    "usuario": "player1",
+    "email": "player1@jaquemate.com",
+    "password": "password123"
+}
+
+###
+
+### Registrar otro usuario
+POST http://localhost:8090/api/v1/usuarios/registro HTTP/1.1
+Content-Type: application/json
+
+{
+    "usuario": "magnus",
+    "email": "magnus@chess.com",
+    "password": "worldchamp123"
+}
+
+###
+
+### Login de usuario
+POST http://localhost:8090/api/v1/usuarios/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "usuario": "magnus",
+    "password": "worldchamp123"
+}
+### actualizar de usuario
+PUT http://localhost:8090/api/v1/usuarios/perfil/1 HTTP/1.1
+Content-Type: application/json
+
+{
+    "usuario": "yordan",
+    "password": "yordan"
+}
+
+###
+
+### Login con credenciales incorrectas
+POST http://localhost:8090/api/v1/usuarios/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "usuario": "player1",
+    "password": "wrongpassword"
+}
+
+###
+
+### Obtener perfil por nombre de usuario
+GET http://localhost:8090/api/v1/usuarios/perfil/player1 HTTP/1.1
+Content-Type: application/json
+
+###
+
+### Obtener perfil por email
+GET http://localhost:8090/api/v1/usuarios/email/player1@jaquemate.com HTTP/1.1
+Content-Type: application/json
+
+###
+
+### Obtener perfil por ID
+GET http://localhost:8090/api/v1/usuarios/1 HTTP/1.1
+Content-Type: application/json
+
+###
+
+### Verificar si existe usuario
+GET http://localhost:8090/api/v1/usuarios/existe/usuario/player1 HTTP/1.1
+Content-Type: application/json
+
+###
+
+### Verificar si existe email
+GET http://localhost:8090/api/v1/usuarios/existe/email/player1@jaquemate.com HTTP/1.1
+Content-Type: application/json
+
+###
+
+
+### Crear una nueva jugada
+POST http://localhost:8090/api/v1/jugadas HTTP/1.1
+Content-Type: application/json
+
+{
+    "usuarioId": 1,
+    "moveSan": "e4",
+    "moveUciFrom": "e2",
+    "moveUciTo": "e4",
+    "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "pgn": "1. e4"
+}
+
+###
+
+### Crear otra jugada
+POST http://localhost:8090/api/v1/jugadas HTTP/1.1
+Content-Type: application/json
+
+{
+    "usuarioId": 1,
+    "moveSan": "Nf3",
+    "moveUciFrom": "g1",
+    "moveUciTo": "f3",
+    "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1",
+    "pgn": "1. e4 e5 2. Nf3"
+}
+
+###
+
+### Crear jugada para otro usuario
+POST http://localhost:8090/api/v1/jugadas HTTP/1.1
+Content-Type: application/json
+
+{
+    "usuarioId": 2,
+    "moveSan": "d4",
+    "moveUciFrom": "d2",
+    "moveUciTo": "d4",
+    "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "pgn": "1. d4"
+}
+
+###
+
+### Obtener todas las jugadas (paginadas)
+GET http://localhost:8090/api/v1/jugadas HTTP/1.1
+Content-Type: application/json
+
+###
+
+### Obtener jugadas con paginación específica
+GET http://localhost:8090/api/v1/jugadas?page=0&size=5 HTTP/1.1
+Content-Type: application/json
+
+###
+
+### Obtener jugadas ordenadas por FEN ascendente
+GET http://localhost:8090/api/v1/jugadas?sort=fen,asc HTTP/1.1
+Content-Type: application/json
+
+###
+
+### Obtener jugadas ordenadas por fecha descendente
+GET http://localhost:8090/api/v1/jugadas?sort=createdAt,desc&page=0&size=10 HTTP/1.1
+Content-Type: application/json
+
+###
+
+### Filtrar jugadas por usuario ID
+GET http://localhost:8090/api/v1/jugadas/usuario/1 HTTP/1.1
+Content-Type: application/json
+
+###
+
+### Filtrar jugadas por usuario ID con paginación
+GET http://localhost:8090/api/v1/jugadas/usuario/1?page=0&size=5&sort=createdAt,desc HTTP/1.1
+Content-Type: application/json
+
+###
+
+### Filtrar jugadas por nombre de jugador
+GET http://localhost:8090/api/v1/jugadas/jugador/player HTTP/1.1
+Content-Type: application/json
+
+###
+
+### Filtrar jugadas por nombre de jugador con paginación
+GET http://localhost:8090/api/v1/jugadas/jugador/magnus?page=0&size=10&sort=fen,asc HTTP/1.1
+Content-Type: application/json
+
+###
+
+### Obtener jugada por ID
+GET http://localhost:8090/api/v1/jugadas/1 HTTP/1.1
+Content-Type: application/json
+
+
+###
+
+
+
+### Exportar todas las jugadas a CSV
+GET http://localhost:8090/api/v1/jugadas/exportar/csv HTTP/1.1
+Accept: text/csv
+
+###
+### importar jugadas http://localhost:8090/api/v1/jugadas/importar/csv 
+### confirmar importar jugadas http://localhost:8090/api/v1/jugadas//importar/confirmar 
+
+### Intentar crear usuario con datos inválidos (usuario muy corto)
+POST http://localhost:8090/api/v1/usuarios/registro HTTP/1.1
+Content-Type: application/json
+
+{
+    "usuario": "ab",
+    "email": "test@test.com",
+    "password": "123456"
+}
+
+###
+
+### Intentar crear usuario con email inválido
+POST http://localhost:8090/api/v1/usuarios/registro HTTP/1.1
+Content-Type: application/json
+
+{
+    "usuario": "testuser",
+    "email": "email-invalido",
+    "password": "123456"
+}
+
+###
+
+### Intentar crear jugada sin FEN
+POST http://localhost:8090/api/v1/jugadas HTTP/1.1
+Content-Type: application/json
+
+{
+    "usuarioId": 1,
+    "moveSan": "e4",
+    "moveUciFrom": "e2",
+    "moveUciTo": "e4"
+}
+
+###
+
+### Intentar crear jugada con usuario inexistente
+POST http://localhost:8090/api/v1/jugadas HTTP/1.1
+Content-Type: application/json
+
+{
+    "usuarioId": 9999,
+    "moveSan": "e4",
+    "moveUciFrom": "e2",
+    "moveUciTo": "e4",
+    "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+}
+
+###
+
+### Acceder a la documentación de la API
+GET http://localhost:8090/api-docs HTTP/1.1
+
+###
+
+### Swagger UI está disponible en:
+### http://localhost:8090/swagger-ui.html
