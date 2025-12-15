@@ -39,7 +39,6 @@ export async function registrarUsuario(usuarioData) {
 
     return await response.json();
   } catch (error) {
-    console.error('Error al registrar usuario:', error);
     throw error;
   }
 }
@@ -62,7 +61,6 @@ export async function loginUsuario(credenciales) {
 
     return await response.json();
   } catch (error) {
-    console.error('Error al iniciar sesión:', error);
     throw error;
   }
 }
@@ -84,7 +82,6 @@ export async function obtenerPerfilPorUsuario(usuario) {
 
     return await response.json();
   } catch (error) {
-    console.error('Error al obtener perfil:', error);
     throw error;
   }
 }
@@ -105,7 +102,6 @@ export async function obtenerPerfilPorEmail(email) {
 
     return await response.json();
   } catch (error) {
-    console.error('Error al obtener perfil:', error);
     throw error;
   }
 }
@@ -127,7 +123,6 @@ export async function obtenerPerfilPorId(id) {
 
     return await response.json();
   } catch (error) {
-    console.error('Error al obtener perfil:', error);
     throw error;
   }
 }
@@ -146,7 +141,6 @@ export async function verificarExisteUsuario(usuario) {
 
     return await response.json();
   } catch (error) {
-    console.error('Error al verificar usuario:', error);
     throw error;
   }
 }
@@ -165,7 +159,6 @@ export async function verificarExisteEmail(email) {
 
     return await response.json();
   } catch (error) {
-    console.error('Error al verificar email:', error);
     throw error;
   }
 }
@@ -193,7 +186,6 @@ export async function obtenerTodasJugadas(params = {}) {
 
     return await response.json();
   } catch (error) {
-    console.error('Error al obtener jugadas:', error);
     throw error;
   }
 }
@@ -221,7 +213,6 @@ export async function obtenerJugadasPorUsuarioId(usuarioId, params = {}) {
 
     return await response.json();
   } catch (error) {
-    console.error('Error al obtener jugadas del usuario:', error);
     throw error;
   }
 }
@@ -249,7 +240,6 @@ export async function obtenerJugadasPorNombre(nombre, params = {}) {
 
     return await response.json();
   } catch (error) {
-    console.error('Error al obtener jugadas del jugador:', error);
     throw error;
   }
 }
@@ -271,7 +261,6 @@ export async function obtenerJugadaPorId(id) {
 
     return await response.json();
   } catch (error) {
-    console.error('Error al obtener jugada:', error);
     throw error;
   }
 }
@@ -292,7 +281,6 @@ export async function crearJugada(jugadaData) {
 
     return await response.json();
   } catch (error) {
-    console.error('Error al crear jugada:', error);
     throw error;
   }
 }
@@ -314,7 +302,6 @@ export async function eliminarJugada(jugadaId) {
 
     return true;
   } catch (error) {
-    console.error('Error al eliminar jugada:', error);
     throw error;
   }
 }
@@ -335,7 +322,6 @@ export async function exportarJugadasCSV() {
 
     return await response.blob();
   } catch (error) {
-    console.error('Error al exportar jugadas:', error);
     throw error;
   }
 }
@@ -358,7 +344,6 @@ export async function importarJugadasCSV(file, usuarioId) {
 
     return await response.json();
   } catch (error) {
-    console.error('Error al importar CSV:', error);
     throw error;
   }
 }
@@ -378,7 +363,6 @@ export async function confirmarImportacionJugadas(usuarioId, jugadas) {
 
     return await response.json();
   } catch (error) {
-    console.error('Error al confirmar importación:', error);
     throw error;
   }
 }
@@ -405,7 +389,6 @@ export async function actualizarPerfil(usuarioId, perfilData) {
 
     return await response.json();
   } catch (error) {
-    console.error('Error al actualizar perfil:', error);
     throw error;
   }
 }

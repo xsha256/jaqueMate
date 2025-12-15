@@ -122,7 +122,6 @@ class GameRegister extends HTMLElement {
                 this.showNotification('Error', 'No se pudo completar el registro. Intenta de nuevo.', 'error');
             }
         } catch (error) {
-            console.error('Error al registrarse:', error);
 
             // Mostrar mensaje de error específico
             if (error.message.includes('409') || error.message.includes('duplicado') || error.message.includes('ya existe')) {

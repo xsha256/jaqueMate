@@ -103,7 +103,6 @@ class GameLogin extends HTMLElement {
                 this.showNotification('Error', 'No se pudo iniciar sesión. Verifica tus credenciales.', 'error');
             }
         } catch (error) {
-            console.error('Error al iniciar sesión:', error);
 
             // Mostrar mensaje de error
             if (error.message.includes('401') || error.message.includes('inválidas') || error.message.includes('Credenciales')) {

@@ -247,12 +247,10 @@ class GameMoves extends HTMLElement {
                 this.currentPage = 1;
                 this.applyFilters();
             } else {
-                console.warn('Respuesta vacía del backend');
                 this.moves = [];
                 this.applyFilters();
             }
         } catch (error) {
-            console.error('Error al cargar jugadas del backend:', error);
             alert(`Error al cargar jugadas: ${error.message}`);
             this.moves = [];
             this.applyFilters();
@@ -461,7 +459,6 @@ class GameMoves extends HTMLElement {
                 // Recargar la lista desde el backend
                 await this.loadFromBackend();
             } catch (error) {
-                console.error('Error al eliminar jugada:', error);
                 alert(`Error al eliminar jugada: ${error.message}`);
             }
         }
@@ -646,7 +643,6 @@ class GameMoves extends HTMLElement {
             // Recargar la lista de jugadas desde la BD
             await this.loadFromBackend();
         } catch (error) {
-            console.error('Error al confirmar importación CSV:', error);
             this.showNotification(
                 'Error al Importar',
                 error.message || 'No se pudieron importar las jugadas',

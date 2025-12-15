@@ -157,7 +157,6 @@ class GameProfile extends HTMLElement {
                 this.showNotification('Error', 'No se pudieron cargar los datos del perfil', 'error');
             }
         } catch (error) {
-            console.error('Error al cargar perfil:', error);
             this.showNotification('Error', error.message || 'Error al cargar el perfil', 'error');
         }
     }
@@ -218,7 +217,6 @@ class GameProfile extends HTMLElement {
                 this.showNotification('Error', 'No se pudo actualizar el perfil', 'error');
             }
         } catch (error) {
-            console.error('Error al actualizar perfil:', error);
 
             // Mostrar mensaje específico para nombre de usuario duplicado
             if (error.message.includes('409') || error.message.includes('uso') || error.message.includes('duplicado')) {

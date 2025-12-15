@@ -213,7 +213,6 @@ class TableroAjedrez extends HTMLElement {
 
       return chess.fen();
     } catch (e) {
-      console.error("Error al obtener FEN:", e);
       return "start";
     }
   }
