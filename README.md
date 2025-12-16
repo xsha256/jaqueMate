@@ -73,7 +73,7 @@ JaqueMate es una aplicación web full-stack diseñada para registrar y analizar 
 ---
 ![Footer](database/init/footer.png)
 ---
-![Ventana Jugadas](database/init/jugadas1.png)
+![Ventana Jugadas](database/init/jugadas.png)
 ---
 ![Paginacion Jugadas](database/init/jugadas2.png)
 ---
@@ -83,9 +83,9 @@ JaqueMate es una aplicación web full-stack diseñada para registrar y analizar 
 ---
 ![Ventana Perfil](database/init/perfil.png)
 ---
-![Ventana Juego](database/init/juego1.png)
+![Ventana Juego](database/init/tablero1.png)
 ---
-![Ventana Juego con Tabla de Movimientos](database/init/juego2.png)
+![Ventana Juego con Tabla de Movimientos](database/init/tablero2.png)
 ---
 
 ## Arquitectura
